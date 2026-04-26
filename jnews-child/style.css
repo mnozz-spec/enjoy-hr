@@ -8,3 +8,35 @@ Template: jnews
 Version: 1.0.0
 Text Domain: jnews-child
 */
+
+/* =============================================================================
+   GRADIENT OVERLAY OVERRIDES
+   Goal: Condé Nast Traveler aesthetic — photos breathe, minimal overlay,
+   dark fade only at the very bottom for title legibility.
+   Croatia tourism content (sun, sea, food) needs photos to dominate.
+   Audit reference: docs/audit-findings.md → Gradient overlay analysis
+   JNews source files: jnews/assets/css/main.css, jnewshero.css, pages.css
+   ============================================================================= */
+
+/* Hero overlay — photo breathes fully in top half, subtle fade at bottom only.
+   Overrides: linear-gradient(to bottom, rgba(0,0,0,0) 0, #000 65%, #000 100%)
+   Source: jnews/assets/css/jnewshero.css */
+.jeg_hero_style_1 .jeg_thumb a>div:before,
+.jeg_hero_style_2 .jeg_thumb a>div:before {
+    background: linear-gradient(to bottom, transparent 0%, transparent 50%, rgba(0,0,0,0.5) 100%) !important;
+}
+
+/* Post card thumbnails — top 60% fully clear, bottom 40% subtle darkening for title legibility.
+   Overrides: linear-gradient(to bottom, rgba(0,0,0,0) 0, rgba(0,0,0,.65) 70%)
+   Source: jnews/assets/css/main.css */
+.jeg_pl_lg_box .jeg_postblock_content,
+.jeg_pl_md_box .jeg_postblock_content {
+    background: linear-gradient(to bottom, transparent 0%, transparent 60%, rgba(0,0,0,0.55) 100%) !important;
+}
+
+/* Category archive header — very subtle bottom-only fade for category title legibility.
+   Overrides: linear-gradient(to bottom, rgba(0,0,0,.3) 0, rgba(0,0,0,.65) 100%)
+   Source: jnews/assets/css/pages.css */
+.jeg_cat_overlay.dark .jeg_cat_bg:after {
+    background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.25) 100%) !important;
+}
