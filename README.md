@@ -10,7 +10,7 @@ Custom development for **enjoy.hr**, a Croatian tourism content platform running
 - `docs/workflow.md` — Daily workflow: local → staging → production
 - `docs/deployment.md` — How to deploy changes safely
 - `tasks/` — Task briefs for specific pieces of work
-- `child-theme/` — The JNews child theme source code (symlinked into Local's WordPress install)
+- `enjoy-croatia/` — The child theme source code (symlinked into Local's WordPress install)
 - `snippets/` — Standalone PHP snippets (for reference)
 
 ## Quick start
@@ -21,7 +21,7 @@ If everything's already set up:
 
 ```bash
 # Connect to Hostinger via SSH
-ssh enjoycroatia
+ssh enjoyhr
 
 # Or start a Claude Code session in the project root
 cd ~/claude-projects/enjoy-hr
@@ -48,7 +48,7 @@ claude
 
 - **Provider:** Hostinger
 - **Plan:** Business
-- **SSH alias:** `enjoycroatia` (configured in `~/.ssh/config`)
+- **SSH alias:** `enjoyhr` (configured in `~/.ssh/config`)
 - **WP-CLI:** Available on the server at `/usr/local/bin/wp`
 
 ## Contact

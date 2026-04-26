@@ -6,7 +6,7 @@ Complete these steps in order. Check off as you go. This is a one-time setup.
 
 ## Phase 1 — SSH access to Hostinger ✅ DONE
 
-- [x] SSH key generated (`~/.ssh/hostinger_enjoycroatia`)
+- [x] SSH key generated (`~/.ssh/hostinger_enjoyhr`)
 - [x] Public key added to Hostinger
 - [x] SSH connection tested successfully
 
@@ -15,17 +15,17 @@ Complete these steps in order. Check off as you go. This is a one-time setup.
 cat ~/.ssh/config
 ```
 
-You should see an entry for `Host enjoycroatia`. If not, add this block:
+You should see an entry for `Host enjoyhr`. If not, add this block:
 
 ```
-Host enjoycroatia
+Host enjoyhr
     HostName 92.112.187.42
     Port 65002
     User u320042257
-    IdentityFile ~/.ssh/hostinger_enjoycroatia
+    IdentityFile ~/.ssh/hostinger_enjoyhr
 ```
 
-Then test: `ssh enjoycroatia` — should land you in the shell with no password prompt.
+Then test: `ssh enjoyhr` — should land you in the shell with no password prompt.
 
 ---
 
@@ -102,13 +102,13 @@ Once Phases 1-6 are done, Claude Code will help with:
 - [ ] Project files (PROJECT_PROMPT.md, CLAUDE.md, etc.) in place ✅
 - [ ] `git init`, first commit
 - [ ] Add GitHub remote, push
-- [ ] Verify or create JNews child theme in `child-theme/`
-- [ ] Symlink `child-theme/` into `~/Local Sites/enjoyhr/app/public/wp-content/themes/jnews-child`
+- [ ] Verify or create JNews child theme in `enjoy-croatia/`
+- [ ] Symlink `enjoy-croatia/` into `~/Local Sites/enjoyhr/app/public/wp-content/themes/enjoy-croatia`
 
 The symlink command will be:
 ```bash
-ln -s ~/claude-projects/enjoy-hr/child-theme \
-      ~/Local\ Sites/enjoyhr/app/public/wp-content/themes/jnews-child
+ln -s ~/claude-projects/enjoy-hr/enjoy-croatia \
+      ~/Local\ Sites/enjoyhr/app/public/wp-content/themes/enjoy-croatia
 ```
 
 ---

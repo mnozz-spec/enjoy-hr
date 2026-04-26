@@ -17,15 +17,15 @@ Work happens in Local by Flywheel. The site is at `http://enjoyhr.local`.
 
 The child theme — which is what we actually edit — lives in this repo at:
 ```
-~/claude-projects/enjoy-hr/child-theme/
+~/claude-projects/enjoy-hr/enjoy-croatia/
 ```
 
 It's symlinked into Local's WordPress install at:
 ```
-~/Local Sites/enjoyhr/app/public/wp-content/themes/jnews-child/
+~/Local Sites/enjoyhr/app/public/wp-content/themes/enjoy-croatia/
 ```
 
-Edit the files in `~/claude-projects/enjoy-hr/child-theme/`. Reload `http://enjoyhr.local` in your browser. Iterate.
+Edit the files in `~/claude-projects/enjoy-hr/enjoy-croatia/`. Reload `http://enjoyhr.local` in your browser. Iterate.
 
 ## Step 2 — Commit to Git
 
@@ -51,14 +51,14 @@ Two ways:
 rsync -avz --delete \
   --exclude='.git' \
   --exclude='.DS_Store' \
-  ~/claude-projects/enjoy-hr/child-theme/ \
-  enjoycroatia:domains/staging1.enjoy.hr/public_html/wp-content/themes/jnews-child/
+  ~/claude-projects/enjoy-hr/enjoy-croatia/ \
+  enjoyhr:domains/staging1.enjoy.hr/public_html/wp-content/themes/enjoy-croatia/
 ```
 
 **Option B — Git pull on server (if we set up a Git remote on the server later):**
 
 ```bash
-ssh enjoycroatia "cd domains/staging1.enjoy.hr/public_html/wp-content/themes/jnews-child && git pull origin main"
+ssh enjoyhr "cd domains/staging1.enjoy.hr/public_html/wp-content/themes/enjoy-croatia && git pull origin main"
 ```
 
 We'll start with rsync. Git-on-server can come later if useful.
@@ -83,22 +83,22 @@ If anything is wrong → back to local, fix, recommit, redeploy to staging. Don'
 rsync -avz --delete \
   --exclude='.git' \
   --exclude='.DS_Store' \
-  ~/claude-projects/enjoy-hr/child-theme/ \
-  enjoycroatia:domains/enjoy.hr/public_html/wp-content/themes/jnews-child/
+  ~/claude-projects/enjoy-hr/enjoy-croatia/ \
+  enjoyhr:domains/enjoy.hr/public_html/wp-content/themes/enjoy-croatia/
 ```
 
 Immediately after deploying:
 - [ ] Visit enjoy.hr — does it load?
 - [ ] Spot-check a few pages
 - [ ] Check `wp-admin` still loads
-- [ ] Check error log: `ssh enjoycroatia "tail -50 domains/enjoy.hr/public_html/wp-content/debug.log"` (if WP_DEBUG_LOG enabled)
+- [ ] Check error log: `ssh enjoyhr "tail -50 domains/enjoy.hr/public_html/wp-content/debug.log"` (if WP_DEBUG_LOG enabled)
 
 If something broke on production, **roll back immediately**:
 
 ```bash
 cd ~/claude-projects/enjoy-hr
 git log --oneline      # find the last known-good commit
-git checkout <hash> -- child-theme/
+git checkout <hash> -- enjoy-croatia/
 # Now redeploy this version to production via rsync
 ```
 

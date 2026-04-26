@@ -22,8 +22,8 @@ rsync -avz --delete \
   --exclude='.gitignore' \
   --exclude='node_modules' \
   --exclude='.DS_Store' \
-  ~/claude-projects/enjoy-hr/child-theme/ \
-  enjoycroatia:domains/staging1.enjoy.hr/public_html/wp-content/themes/jnews-child/
+  ~/claude-projects/enjoy-hr/enjoy-croatia/ \
+  enjoyhr:domains/staging1.enjoy.hr/public_html/wp-content/themes/enjoy-croatia/
 ```
 
 ### Deploy child theme to production
@@ -34,8 +34,8 @@ rsync -avz --delete \
   --exclude='.gitignore' \
   --exclude='node_modules' \
   --exclude='.DS_Store' \
-  ~/claude-projects/enjoy-hr/child-theme/ \
-  enjoycroatia:domains/enjoy.hr/public_html/wp-content/themes/jnews-child/
+  ~/claude-projects/enjoy-hr/enjoy-croatia/ \
+  enjoyhr:domains/enjoy.hr/public_html/wp-content/themes/enjoy-croatia/
 ```
 
 ### Dry-run first (always recommended)
@@ -57,7 +57,7 @@ After every production deployment:
 3. **Check browser DevTools console** — JS errors?
 4. **Check error log:**
    ```bash
-   ssh enjoycroatia "tail -50 domains/enjoy.hr/public_html/wp-content/debug.log 2>/dev/null || echo 'no debug log'"
+   ssh enjoyhr "tail -50 domains/enjoy.hr/public_html/wp-content/debug.log 2>/dev/null || echo 'no debug log'"
    ```
 
 ## Rolling back
@@ -69,7 +69,7 @@ If a production deployment breaks something:
 ```bash
 cd ~/claude-projects/enjoy-hr
 git log --oneline -10                          # find last good commit
-git checkout <good-commit-hash> -- child-theme/   # restore those files
+git checkout <good-commit-hash> -- enjoy-croatia/   # restore those files
 # Now deploy this version to production
 rsync -avz --delete ... (as above)
 git checkout <branch>                          # return to working branch
@@ -92,7 +92,7 @@ hPanel has automated daily backups. Worst case, restore the whole site from back
 Database changes (search-replace, schema changes, content imports) are NOT done via this deploy flow. They're done directly on each environment with explicit Marko approval each time:
 
 ```bash
-ssh enjoycroatia
+ssh enjoyhr
 cd domains/staging1.enjoy.hr/public_html
 wp search-replace 'old-string' 'new-string' --dry-run   # ALWAYS dry-run first
 ```
@@ -104,7 +104,7 @@ If dry-run looks good, run for real (without `--dry-run`).
 Always staging first:
 
 ```bash
-ssh enjoycroatia
+ssh enjoyhr
 cd domains/staging1.enjoy.hr/public_html
 wp plugin update <plugin-slug> --dry-run
 wp plugin update <plugin-slug>                # if dry-run good
