@@ -17,15 +17,15 @@ Work happens in Local by Flywheel. The site is at `http://enjoyhr.local`.
 
 The child theme — which is what we actually edit — lives in this repo at:
 ```
-~/claude-projects/enjoy-hr/enjoy-croatia/
+~/claude-projects/enjoy-hr/jnews-child/
 ```
 
 It's symlinked into Local's WordPress install at:
 ```
-~/Local Sites/enjoyhr/app/public/wp-content/themes/enjoy-croatia/
+~/Local Sites/enjoyhr/app/public/wp-content/themes/jnews-child/
 ```
 
-Edit the files in `~/claude-projects/enjoy-hr/enjoy-croatia/`. Reload `http://enjoyhr.local` in your browser. Iterate.
+Edit the files in `~/claude-projects/enjoy-hr/jnews-child/`. Reload `http://enjoyhr.local` in your browser. Iterate.
 
 ## Step 2 — Commit to Git
 
@@ -51,14 +51,14 @@ Two ways:
 rsync -avz --delete \
   --exclude='.git' \
   --exclude='.DS_Store' \
-  ~/claude-projects/enjoy-hr/enjoy-croatia/ \
-  enjoyhr:domains/staging1.enjoy.hr/public_html/wp-content/themes/enjoy-croatia/
+  ~/claude-projects/enjoy-hr/jnews-child/ \
+  enjoyhr:domains/staging1.enjoy.hr/public_html/wp-content/themes/jnews-child/
 ```
 
 **Option B — Git pull on server (if we set up a Git remote on the server later):**
 
 ```bash
-ssh enjoyhr "cd domains/staging1.enjoy.hr/public_html/wp-content/themes/enjoy-croatia && git pull origin main"
+ssh enjoyhr "cd domains/staging1.enjoy.hr/public_html/wp-content/themes/jnews-child && git pull origin main"
 ```
 
 We'll start with rsync. Git-on-server can come later if useful.
@@ -83,8 +83,8 @@ If anything is wrong → back to local, fix, recommit, redeploy to staging. Don'
 rsync -avz --delete \
   --exclude='.git' \
   --exclude='.DS_Store' \
-  ~/claude-projects/enjoy-hr/enjoy-croatia/ \
-  enjoyhr:domains/enjoy.hr/public_html/wp-content/themes/enjoy-croatia/
+  ~/claude-projects/enjoy-hr/jnews-child/ \
+  enjoyhr:domains/enjoy.hr/public_html/wp-content/themes/jnews-child/
 ```
 
 Immediately after deploying:
@@ -98,7 +98,7 @@ If something broke on production, **roll back immediately**:
 ```bash
 cd ~/claude-projects/enjoy-hr
 git log --oneline      # find the last known-good commit
-git checkout <hash> -- enjoy-croatia/
+git checkout <hash> -- jnews-child/
 # Now redeploy this version to production via rsync
 ```
 

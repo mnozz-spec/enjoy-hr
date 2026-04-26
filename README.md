@@ -10,7 +10,7 @@ Custom development for **enjoy.hr**, a Croatian tourism content platform running
 - `docs/workflow.md` — Daily workflow: local → staging → production
 - `docs/deployment.md` — How to deploy changes safely
 - `tasks/` — Task briefs for specific pieces of work
-- `enjoy-croatia/` — The child theme source code (symlinked into Local's WordPress install)
+- `jnews-child/` — The child theme source code (symlinked into Local's WordPress install)
 - `snippets/` — Standalone PHP snippets (for reference)
 
 ## Quick start

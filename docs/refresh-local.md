@@ -106,3 +106,4 @@ Open `http://enjoyhr.local` — should load with current production content.
 - Local's MySQL binary: `~/Library/Application Support/Local/lightning-services/mysql-8.0.35+4/bin/darwin-arm64/bin/mysql`
 - Production table prefix is `ec_` — `wp-config.php` on local must keep `$table_prefix = 'ec_';`
 - `wp-config.php` is excluded from rsync so local settings are preserved
+- The `enjoy-croatia/` folder exists in `wp-content/themes/` on production but is **abandoned** — it's a leftover from a previous site setup and is not the active theme. Decision pending: delete, archive, or ignore. Do not treat it as the child theme.

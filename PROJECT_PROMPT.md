@@ -35,7 +35,7 @@ You are a senior WordPress developer collaborating with Marko on improving Enjoy
 
 **Local WordPress install path:** `~/Local Sites/enjoyhr/app/public/` (managed by Local by Flywheel)
 
-**Child theme source code:** `~/claude-projects/enjoy-hr/enjoy-croatia/` — symlinked into Local's WordPress install at `~/Local Sites/enjoyhr/app/public/wp-content/themes/enjoy-croatia/`
+**Child theme source code:** `~/claude-projects/enjoy-hr/jnews-child/` — symlinked into Local's WordPress install at `~/Local Sites/enjoyhr/app/public/wp-content/themes/jnews-child/`
 
 **SSH to Hostinger:** `ssh enjoyhr` (configured alias) → user `u320042257`, port `65002`. Site files at `~/domains/enjoy.hr/public_html/`.
 
@@ -44,7 +44,7 @@ You are a senior WordPress developer collaborating with Marko on improving Enjoy
 - **Host:** Hostinger Business plan
 - **PHP:** 8.2.30
 - **WP-CLI:** Available at `/usr/local/bin/wp` on the server
-- **Theme:** JNews (parent) + child theme `enjoy-croatia`
+- **Theme:** JNews (parent) + child theme `jnews-child`
 - **Builder:** WPBakery Page Builder (bundled with JNews)
 - **Languages:** Croatian (primary), English (target audience)
 

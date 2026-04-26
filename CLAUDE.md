@@ -20,7 +20,7 @@ WordPress tourism content site running JNews theme on Hostinger. See `PROJECT_PR
 │   ├── workflow.md            # Local → staging → production
 │   ├── deployment.md          # How to deploy changes
 │   └── audit-findings.md      # Created during first audit
-├── enjoy-croatia/               # The JNews child theme (Git-tracked source)
+├── jnews-child/               # The JNews child theme (Git-tracked source)
 │   ├── style.css
 │   ├── functions.php
 │   ├── screenshot.png
@@ -28,13 +28,13 @@ WordPress tourism content site running JNews theme on Hostinger. See `PROJECT_PR
 └── snippets/                  # Standalone PHP snippets (reference)
 ```
 
-The `enjoy-croatia/` folder is symlinked into Local's WordPress install:
+The `jnews-child/` folder is symlinked into Local's WordPress install:
 
 ```
-~/Local Sites/enjoyhr/app/public/wp-content/themes/enjoy-croatia  →  ~/claude-projects/enjoy-hr/enjoy-croatia
+~/Local Sites/enjoyhr/app/public/wp-content/themes/jnews-child  →  ~/claude-projects/enjoy-hr/jnews-child
 ```
 
-You edit the source in `~/claude-projects/enjoy-hr/enjoy-croatia/` and WordPress reads it through the symlink.
+You edit the source in `~/claude-projects/enjoy-hr/jnews-child/` and WordPress reads it through the symlink.
 
 ## Code conventions
 
@@ -76,7 +76,7 @@ You edit the source in `~/claude-projects/enjoy-hr/enjoy-croatia/` and WordPress
 
 ## Deployment workflow
 
-1. **Develop locally** in Local by Flywheel — edit files in `~/claude-projects/enjoy-hr/enjoy-croatia/`, view at `http://enjoyhr.local`
+1. **Develop locally** in Local by Flywheel — edit files in `~/claude-projects/enjoy-hr/jnews-child/`, view at `http://enjoyhr.local`
 2. **Commit to Git** (feature branch)
 3. **Push child theme to staging** via rsync — test there at `https://staging1.enjoy.hr`
 4. **Verify on staging**

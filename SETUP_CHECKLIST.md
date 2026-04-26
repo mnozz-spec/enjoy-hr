@@ -102,13 +102,13 @@ Once Phases 1-6 are done, Claude Code will help with:
 - [ ] Project files (PROJECT_PROMPT.md, CLAUDE.md, etc.) in place ✅
 - [ ] `git init`, first commit
 - [ ] Add GitHub remote, push
-- [ ] Verify or create JNews child theme in `enjoy-croatia/`
-- [ ] Symlink `enjoy-croatia/` into `~/Local Sites/enjoyhr/app/public/wp-content/themes/enjoy-croatia`
+- [ ] Verify or create JNews child theme in `jnews-child/`
+- [ ] Symlink `jnews-child/` into `~/Local Sites/enjoyhr/app/public/wp-content/themes/jnews-child`
 
 The symlink command will be:
 ```bash
-ln -s ~/claude-projects/enjoy-hr/enjoy-croatia \
-      ~/Local\ Sites/enjoyhr/app/public/wp-content/themes/enjoy-croatia
+ln -s ~/claude-projects/enjoy-hr/jnews-child \
+      ~/Local\ Sites/enjoyhr/app/public/wp-content/themes/jnews-child
 ```
 
 ---

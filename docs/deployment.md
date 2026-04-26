@@ -22,8 +22,8 @@ rsync -avz --delete \
   --exclude='.gitignore' \
   --exclude='node_modules' \
   --exclude='.DS_Store' \
-  ~/claude-projects/enjoy-hr/enjoy-croatia/ \
-  enjoyhr:domains/staging1.enjoy.hr/public_html/wp-content/themes/enjoy-croatia/
+  ~/claude-projects/enjoy-hr/jnews-child/ \
+  enjoyhr:domains/staging1.enjoy.hr/public_html/wp-content/themes/jnews-child/
 ```
 
 ### Deploy child theme to production
@@ -34,8 +34,8 @@ rsync -avz --delete \
   --exclude='.gitignore' \
   --exclude='node_modules' \
   --exclude='.DS_Store' \
-  ~/claude-projects/enjoy-hr/enjoy-croatia/ \
-  enjoyhr:domains/enjoy.hr/public_html/wp-content/themes/enjoy-croatia/
+  ~/claude-projects/enjoy-hr/jnews-child/ \
+  enjoyhr:domains/enjoy.hr/public_html/wp-content/themes/jnews-child/
 ```
 
 ### Dry-run first (always recommended)
@@ -69,7 +69,7 @@ If a production deployment breaks something:
 ```bash
 cd ~/claude-projects/enjoy-hr
 git log --oneline -10                          # find last good commit
-git checkout <good-commit-hash> -- enjoy-croatia/   # restore those files
+git checkout <good-commit-hash> -- jnews-child/   # restore those files
 # Now deploy this version to production
 rsync -avz --delete ... (as above)
 git checkout <branch>                          # return to working branch
