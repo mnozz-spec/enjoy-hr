@@ -16,7 +16,7 @@ WordPress tourism content site running JNews theme on Hostinger. See `PROJECT_PR
 ├── SETUP_CHECKLIST.md         # Step-by-step initial setup
 ├── tasks/                     # Task briefs for specific work
 │   ├── 01-site-audit.md       # ✅ Complete
-│   └── 02-production-og-fix-deploy.md  # 🔲 Next task
+│   └── 02-production-og-fix-deploy.md  # ✅ Complete
 ├── docs/                      # Project documentation
 │   ├── workflow.md            # Local → staging → production
 │   ├── deployment.md          # How to deploy changes (exact rsync/WP-CLI commands)
@@ -154,7 +154,7 @@ Lesson learned 2026-04-26: Elementor was incorrectly assessed as unused (file-gr
 |---|---|---|---|
 | Local (enjoyhr.local) | jnews-child | ✅ Yes | Symlinked from repo |
 | Staging (stagin1.enjoy.hr) | jnews-child | ✅ Yes | Verified working |
-| Production (enjoy.hr) | **jnews (parent)** | ❌ No | Child files on server, not activated |
+| Production (enjoy.hr) | **jnews-child** | ✅ Yes | Task 02 complete — activated 2026-04-26, tagged v1.0.0 |
 
 ### What the jnews-child theme does
 
@@ -162,23 +162,22 @@ Lesson learned 2026-04-26: Elementor was incorrectly assessed as unused (file-gr
 1. Enqueues the JNews parent stylesheet
 2. Removes JNews's duplicate OG/Twitter/JSON-LD meta output via `remove_action('wp_head', ...)` on the `wp` hook at priority 20 — this fixes `og:description` being poisoned with raw "edit post" admin markup
 
-### Next task
+### Open tasks
 
-**`tasks/02-production-og-fix-deploy.md`** — complete the production deployment of jnews-child. All steps documented with exact commands, pre-flight checklist, rollback plan, and verification suite. Read that file before starting.
+No open deployment tasks. Next work items come from the audit findings in `docs/audit-findings.md` — see "Recommended improvements" and "Open questions for Marko".
 
-### Audit (Task 01) — closed
+### Audit (Task 01) — closed | Deployment (Task 02) — closed
 
 Findings are in `docs/audit-findings.md`. Key things to know:
 - Security incident (backup exposure) fully remediated
 - Elementor + Elementor Pro: required infrastructure — Theme Builder powers header, footer, single post, archive, 404, search, popup
 - Plugin "unused" assessment methodology corrected — always check postmeta and `elementor_library` CPT before declaring a page builder unused
-- OG/Twitter meta duplicate conflict still unfixed on production (that's what Task 02 fixes)
+- OG/Twitter meta fix live on all three environments as of 2026-04-26
 
 ### Known production DB state
 
 - Table prefix: `ec_` (non-standard)
-- `theme_mods_jnews-child` row does NOT exist yet on production (needs to be copied from `theme_mods_jnews` as part of Task 02)
-- `theme_mods_jnews-child` row exists on staging (copied during Task 01 staging deploy)
+- `theme_mods_jnews-child` row exists — copied from `theme_mods_jnews` during Task 02 deploy (2026-04-26)
 
 ### SSH / deployment quick reference
 

@@ -448,13 +448,15 @@ All-in-One WP Migration stores backups in the web root with insufficient access 
 
 | | Local | Staging | Production |
 |---|---|---|---|
-| Active theme | jnews-child | jnews-child | **jnews (parent)** |
-| JNews OG fix | ✅ live | ✅ live | ❌ not live |
-| theme_mods copied | ✅ | ✅ | ❌ not done |
-| jnews-child files | n/a | deployed | present but inactive |
+| Active theme | jnews-child | jnews-child | **jnews-child** ✅ |
+| JNews OG fix | ✅ live | ✅ live | ✅ live (Task 02 complete) |
+| theme_mods copied | ✅ | ✅ | ✅ done |
+| jnews-child files | n/a | deployed | deployed and active |
 | Elementor free | ✅ active | ✅ active | ✅ active |
 | Elementor Pro | ✅ active | ✅ active | ✅ active (reactivated) |
 | Security cleanup | ✅ done | n/a | ✅ done |
+
+**Task 02 closed 2026-04-26.** All three environments now match: jnews-child active, Rank Math OG/Twitter/JSON-LD output clean, no JNews duplicate meta. Tagged v1.0.0.
 
 ---
 
