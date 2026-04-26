@@ -1,0 +1,12 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Claude Code local settings
+.claude/
+
+# WordPress / child theme specifics
+child-theme/.DS_Store
+*.log
+wp-config.php
