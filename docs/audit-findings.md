@@ -24,7 +24,7 @@ enjoy.hr is a pre-launch tourism content site with a sound technical foundation.
 
 1. **Disable JNews Open Graph output** — One settings change stops the mangled social preview on the homepage. wp-admin → JNews Dashboard → Social → Open Graph → disable. Takes 2 minutes, fixes the most visible pre-launch SEO issue.
 
-2. ~~**Remove FakerPress and All-in-One WP Migration**~~ — ✓ All-in-One WP Migration deactivated and deleted 2026-04-26. **FakerPress still pending** — deactivate and delete from wp-admin → Plugins.
+2. ~~**Remove FakerPress and All-in-One WP Migration**~~ — ✓ All-in-One WP Migration deactivated and deleted 2026-04-26. ✓ FakerPress deleted from staging + production 2026-04-26 — 14MB reclaimed.
 
 3. ~~**Remove Elementor**~~ — Elementor + Elementor Pro are **essential infrastructure**. Both reactivated 2026-04-26. See Lessons Learned for full incident and methodology correction. Biggest performance lever is now elsewhere (Site Kit, video plugin).
 
@@ -33,9 +33,9 @@ enjoy.hr is a pre-launch tourism content site with a sound technical foundation.
 ## Quick wins (low effort, high value)
 
 1. **Disable JNews Open Graph output** — Fixes mangled social previews. wp-admin → JNews Dashboard → Social → Open Graph → disable. 2 minutes.
-2. **Remove FakerPress** — 14MB inactive test-data generator. Deactivate and delete from wp-admin → Plugins.
-3. **Update overdue plugins** — Mailchimp for WP, Rank Math, WP Super Cache, and Elementor (free) all have updates available.
-4. **Override the hero gradient** — one 3-line CSS rule in `jnews-child/style.css`. Fastest visible improvement with zero risk.
+2. ~~**Remove FakerPress**~~ — ✓ Done 2026-04-26. Deleted from staging + production. 14MB reclaimed.
+3. ~~**Update overdue plugins**~~ — ✓ Done 2026-04-26. Mailchimp for WP 4.12.2, Rank Math 1.0.268, WP Super Cache 3.1.0. Elementor had no update available.
+4. ~~**Override the hero gradient**~~ — ✓ Done 2026-04-26. Condé Nast aesthetic applied across hero, post cards (+ text-shadow), and category headers. Tagged v1.1.0.
 5. **Delete 55 empty categories** — bloat sitemaps and nav menus. Consolidate alongside content production.
 6. ~~**Delete the .wpress backup file**~~ — ✓ Done 2026-04-26.
 7. ~~**Fix wp-config.php permissions**~~ — ✓ Done 2026-04-26. Changed to 600.
