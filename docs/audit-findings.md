@@ -21,7 +21,7 @@ Performance and SEO numbers are pending (steps 4–5 below), but the plugin inve
 1. **Remove FakerPress** — 14MB inactive test-data generator sitting on production. Deactivate and delete.
 2. **Deactivate All-in-One WP Migration** — only needed during migrations, currently active and watching all requests.
 3. ~~**Delete the .wpress backup file**~~ — ✓ Done 2026-04-26. See Security section for exposure window and follow-up recommendations.
-4. **Fix wp-config.php permissions** — currently 644 (world-readable on shared hosting). Change to 600: `chmod 600 domains/enjoy.hr/public_html/wp-config.php`
+4. ~~**Fix wp-config.php permissions**~~ — ✓ Done 2026-04-26. Changed to 600 (owner read/write only).
 5. **Disable JNews meta output** — JNews and Rank Math are both emitting OG/Twitter/Schema tags. JNews's output appears first and contains mangled admin-UI text in the homepage description. In JNews Dashboard → Social → Open Graph, disable JNews's own OG/Twitter output. Rank Math's output is correct.
 6. **Update four overdue plugins** — Elementor, Mailchimp for WP, Rank Math, WP Super Cache all have updates available.
 7. **Delete 55 empty categories** — or at minimum, hide them from navigation. They bloat sitemaps and can hurt crawl efficiency.
@@ -318,7 +318,7 @@ Fixing the duplicate meta output (above) will also resolve the empty-name schema
 | debug.log | Not present ✓ | WP_DEBUG_LOG off |
 | Leftover test files | None ✓ | No info.php, test.php, etc. |
 | Hello World post | Not present ✓ | |
-| wp-config.php permissions | **644 ❌** | World-readable on shared hosting — exposes DB credentials to other server users. Fix: `chmod 600` |
+| wp-config.php permissions | ✓ 600 — fixed 2026-04-26 | Owner read/write only |
 | .htaccess permissions | 644 ✓ | Standard for Apache |
 | wp-content/ permissions | 755 ✓ | Standard |
 | uploads/ permissions | 755 ✓ | Standard |
