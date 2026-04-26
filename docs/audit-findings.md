@@ -14,7 +14,7 @@ enjoy.hr is a pre-launch tourism content site with a sound technical foundation.
 
 **SEO** — JNews and Rank Math are both outputting Open Graph, Twitter Card, and JSON-LD schema tags. JNews wins on first-occurrence, and its homepage `og:description` contains raw admin-UI markup. Anyone sharing the homepage URL on social gets a broken preview. One settings change in JNews Dashboard fixes this immediately.
 
-**Performance** — Cannot be measured yet (PageSpeed Insights API quota not elevated). Plugin weight is a red flag: 76MB Elementor (required — homepage is built with it) + 21MB Site Kit + 20MB WebP Express + 13MB video plugin is an unusually heavy baseline for a pre-launch site. Elementor cannot be removed without rebuilding the homepage.
+**Performance** — Cannot be measured yet (PageSpeed Insights API quota not elevated). Plugin weight is a red flag: 76MB Elementor + 18MB Elementor Pro (both required — essential infrastructure) + 21MB Site Kit + 20MB WebP Express + 13MB video plugin is an unusually heavy baseline for a pre-launch site. Elementor and Elementor Pro cannot be removed: they power the homepage, all article layouts, header, footer, 404, archive, search results, and popup via Theme Builder.
 
 **Accessibility** — Lighthouse scores 81/100 on local (meets the 80+ target). Five failures are all JNews theme defaults addressable with CSS overrides in the child theme and one `aria-label` content fix. No template copies required.
 
@@ -26,7 +26,7 @@ enjoy.hr is a pre-launch tourism content site with a sound technical foundation.
 
 2. ~~**Remove FakerPress and All-in-One WP Migration**~~ — ✓ All-in-One WP Migration deactivated and deleted 2026-04-26. **FakerPress still pending** — deactivate and delete from wp-admin → Plugins.
 
-3. **Decide on Elementor Pro** — Elementor (free) is required and active. Elementor Pro was deactivated on production during cleanup on 2026-04-26 (see Lessons Learned). Confirm with Marko whether Elementor Pro features are used and whether it should be reactivated. Biggest single plugin weight reduction available.
+3. ~~**Remove Elementor**~~ — Elementor + Elementor Pro are **essential infrastructure**. Both reactivated 2026-04-26. See Lessons Learned for full incident and methodology correction. Biggest performance lever is now elsewhere (Site Kit, video plugin).
 
 ---
 
@@ -49,7 +49,7 @@ enjoy.hr is a pre-launch tourism content site with a sound technical foundation.
 1. **Gradient overlay overrides** — documented below; ready to implement in child theme.
 2. **Fix duplicate OG/Twitter/Schema output** — disable JNews's meta output (see SEO section). One-time settings change, no code required.
 3. ~~**Remove All-in-One WP Migration**~~ — ✓ Done 2026-04-26. Deactivated and deleted.
-4. **Elementor — REQUIRED, do not remove** — The homepage is built with Elementor. Removing Elementor breaks the homepage layout entirely (admin edit-post links render inline, card styling disappears). Confirmed 2026-04-26 when deletion caused a production outage. Elementor (free) has been reactivated. **Elementor Pro status:** was active, then deactivated during cleanup — Marko to confirm whether Pro features are in use and whether to reactivate.
+4. **Elementor + Elementor Pro — REQUIRED INFRASTRUCTURE, do not remove** — Both plugins are essential. Elementor (free) powers the homepage and all 10 published posts. Elementor Pro powers the entire site frame via Theme Builder: Header, Footer, Single Post template, Posts Archive, 404 Page, Search Results, and a Subscription Popup — all confirmed active `elementor_library` templates (IDs 253, 258, 242, 249, 246, 239, 233). Deletion of either plugin causes immediate full-site breakage. Confirmed by production incident 2026-04-26 — see Lessons Learned. Both reactivated and verified 2026-04-26.
 3. **Consolidate category taxonomy** — 55 empty categories of 80+ total is excessive even pre-launch. Consolidate to 8–15 user-intent-based categories (geographic regions, trip types, practical/seasonal). Curate alongside content production over the next 2–4 weeks rather than bulk-deleting now.
 4. **Evaluate videojs-html5-player** — 13MB active plugin. If no video embeds exist in posts, deactivate.
 5. **Implement WebP for all existing images** — WebP Express is installed; verify it is converting and serving correctly.
@@ -90,10 +90,10 @@ enjoy.hr is a pre-launch tourism content site with a sound technical foundation.
 
 | Plugin | Version | Size | Update? | Flag |
 |---|---|---|---|---|
-| elementor | 4.0.1 | 76MB | **YES** | **REQUIRED** — homepage built with Elementor; update pending |
+| elementor | 4.0.1 | 76MB | **YES** | **REQUIRED** — homepage + all posts + Theme Builder; update pending |
 | google-site-kit | 1.177.0 | 21MB | No | Heavy; verify GA4 is actually receiving data |
 | webp-express | 0.25.14 | 20MB | No | Verify it is converting and serving correctly |
-| elementor-pro | 4.0.3 | 18MB | No | Deactivated on production 2026-04-26 — pending decision on reactivation |
+| elementor-pro | 4.0.3 | 18MB | No | **REQUIRED** — Theme Builder (header, footer, single post, archive, 404, search, popup); reactivated 2026-04-26 |
 | videojs-html5-player | 1.1.13 | 13MB | No | Active but is video actually used? |
 | seo-by-rank-math | 1.0.267 | 12MB | **YES** | Update pending |
 | seo-by-rank-math-pro | 3.0.108 | 11MB | No | |
@@ -396,25 +396,71 @@ All-in-One WP Migration stores backups in the web root with insufficient access 
 
 ## Lessons learned — 2026-04-26
 
-### Audit finding: "Elementor unused" was incorrect
+### Incident: "Elementor unused" finding was incorrect — caused production outage
 
-**What happened:** The audit assessed Elementor as unused and recommended removal. The assessment was based on scanning plugin files and theme PHP for Elementor references. Marko deleted Elementor + Elementor Pro from production, which immediately broke the homepage — admin edit-post links appeared inline, card styling disappeared, and OG meta pulled the broken rendered content as its description.
+**What happened:** The audit declared Elementor "confirmed unused" based on file-level grep of plugin references. Marko acted on this finding and deleted Elementor + Elementor Pro from production on 2026-04-26. The site immediately broke: admin "edit post" links appeared publicly on every article card, card styling disappeared entirely, and OG/Twitter meta pulled the broken rendered content into `og:description`. Elementor (free) was reactivated, restoring the homepage. Investigation then confirmed Elementor Pro was also required — Theme Builder templates for header, footer, single post, archive, 404, search results, and a subscription popup were all active Pro features. Both plugins were reactivated and the site fully restored.
 
-**Root cause of incorrect finding:** Page builder usage is stored in `wp_postmeta` (specifically `_elementor_data` and `_elementor_edit_mode` keys), not in theme or plugin PHP files. Grep-based analysis of file references cannot detect page builder content — it only finds code-level dependencies. The homepage is an Elementor-built page with no raw PHP template behind it; without Elementor active, WordPress falls back to a stripped render that exposes internal admin markup.
+**Root cause of incorrect finding:** Plugin usage by page builders is stored in `wp_postmeta`, not in PHP files. The keys `_elementor_edit_mode = "builder"` and `_elementor_data` (the full layout JSON) live in the database. Scanning plugin folders and theme files for string references only catches code-level dependencies — it misses every page that was designed visually in the builder. Additionally, Elementor Pro's Theme Builder templates are stored as `elementor_library` custom post type entries in the database; they have no corresponding PHP files in the plugin or theme to grep.
 
-**Correct method before declaring a page builder unused:**
-1. `wp post meta list <page-id> --keys=_elementor_edit_mode` — check if Elementor mode is enabled on key pages
-2. `wp db query "SELECT post_id, meta_key FROM ec_postmeta WHERE meta_key = '_elementor_edit_mode' AND meta_value = 'builder' LIMIT 10;"` — find all Elementor-built posts/pages
-3. Visually inspect the homepage and any other pages that might use builder content
-4. File-level grep is a necessary but not sufficient check — postmeta is the definitive source
+**Correct methodology before declaring any page builder unused:**
 
-**Current state:** Elementor (free) reactivated, site restored. Elementor Pro deactivated — pending Marko's decision. All audit recommendations involving Elementor removal have been corrected above.
+1. **Check postmeta for builder edit mode on key pages:**
+   ```bash
+   wp db query "SELECT post_id, post_title FROM ec_postmeta pm JOIN ec_posts p ON pm.post_id = p.ID WHERE pm.meta_key = '_elementor_edit_mode' AND pm.meta_value = 'builder';" | grep -v revision
+   ```
+2. **Check for Elementor Pro Theme Builder templates** (these are always `elementor_library` post type):
+   ```bash
+   wp db query "SELECT post_id, post_title, post_status FROM ec_postmeta pm JOIN ec_posts p ON pm.post_id = p.ID WHERE pm.meta_key = '_elementor_edit_mode' AND pm.meta_value = 'builder' AND p.post_type = 'elementor_library' AND p.post_status = 'publish';"
+   ```
+3. **Visual inspection in incognito** — load homepage, a single post, a category archive, and 404 in a private browser window. If the layout depends on the plugin, removal will be immediately visible.
+4. **Assume required until proven otherwise** — file-level grep is evidence of absence only for code-level dependencies. Treat absence of grep hits as inconclusive for page builders.
+
+**Future audit rule:** Never declare a page builder plugin unused based on file scanning alone. Postmeta and custom post types are the authoritative source.
+
+---
+
+### Deployment retrospective — 2026-04-26
+
+**Goal:** Deploy JNews child theme (OG meta fix) to production.
+
+**What was completed:**
+- JNews OG meta fix coded in `jnews-child/functions.php` and tested locally ✅
+- Committed and pushed to GitHub ✅
+- Staging deployment completed and fully verified (incognito check, OG tags, error log) ✅
+- Production rsync (file-only, theme not activated) completed ✅
+
+**What was interrupted:**
+- Production theme activation (Step 4) was paused at approval gate
+- Before approval was given, Marko deleted Elementor + Pro during manual plugin audit
+- Site appeared broken; deployment was rolled back (rollback had no effect — child theme was never activated)
+- Investigation confirmed Elementor deletion was the actual cause, not the deployment
+
+**Outcome:**
+- Production child theme files are on the server but the theme is NOT active
+- The OG meta fix is NOT live on production
+- Production is running JNews parent theme
+- Elementor + Pro reactivated, site fully restored
+- Deployment to be re-attempted in a future session (see `tasks/02-production-og-fix-deploy.md`)
+
+---
+
+### Current state as of end of 2026-04-26
+
+| | Local | Staging | Production |
+|---|---|---|---|
+| Active theme | jnews-child | jnews-child | **jnews (parent)** |
+| JNews OG fix | ✅ live | ✅ live | ❌ not live |
+| theme_mods copied | ✅ | ✅ | ❌ not done |
+| jnews-child files | n/a | deployed | present but inactive |
+| Elementor free | ✅ active | ✅ active | ✅ active |
+| Elementor Pro | ✅ active | ✅ active | ✅ active (reactivated) |
+| Security cleanup | ✅ done | n/a | ✅ done |
 
 ---
 
 ## Open questions for Marko
 
-1. **Elementor Pro reactivation** — Elementor (free) is active and required. Elementor Pro (4.0.3) was deactivated during cleanup on 2026-04-26. Are any Elementor Pro features used on the site (popups, theme builder, form widgets)? If yes, reactivate Pro. If no, leave deactivated and move the license to another site.
+1. ~~**Elementor Pro reactivation**~~ — ✓ Resolved 2026-04-26. Elementor Pro confirmed required: Theme Builder templates for header, footer, single post, archive, 404, search, and popup all active. Both Elementor free and Pro reactivated. Do not remove either.
 2. **Video content:** Is videojs-html5-player actually used? Any posts with video embeds? If not, 13MB plugin can go.
 3. **Social login:** Is jnews-social-login (6.8MB) actively offered to visitors? Any registered users via Facebook/Google?
 4. **Category cleanup:** Are all 80+ categories intentional for a future content plan, or can we trim to ~20 active ones now?
