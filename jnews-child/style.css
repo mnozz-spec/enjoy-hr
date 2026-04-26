@@ -26,12 +26,21 @@ Text Domain: jnews-child
     background: linear-gradient(to bottom, transparent 0%, transparent 50%, rgba(0,0,0,0.5) 100%) !important;
 }
 
-/* Post card thumbnails — top 60% fully clear, bottom 40% subtle darkening for title legibility.
+/* Post card thumbnails — minimal gradient, photo breathes.
    Overrides: linear-gradient(to bottom, rgba(0,0,0,0) 0, rgba(0,0,0,.65) 70%)
    Source: jnews/assets/css/main.css */
 .jeg_pl_lg_box .jeg_postblock_content,
 .jeg_pl_md_box .jeg_postblock_content {
     background: linear-gradient(to bottom, transparent 0%, transparent 60%, rgba(0,0,0,0.55) 100%) !important;
+}
+
+/* Card titles — subtle text-shadow for legibility against any photo background.
+   Both anchor and container selectors for JNews inconsistency across layouts. */
+.jeg_pl_lg_box .jeg_post_title a,
+.jeg_pl_md_box .jeg_post_title a,
+.jeg_pl_lg_box .jeg_post_title,
+.jeg_pl_md_box .jeg_post_title {
+    text-shadow: 0 1px 3px rgba(0,0,0,0.6);
 }
 
 /* Category archive header — very subtle bottom-only fade for category title legibility.
