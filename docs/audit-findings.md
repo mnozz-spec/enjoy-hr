@@ -8,24 +8,39 @@
 
 ## Executive summary
 
-enjoy.hr is a pre-launch tourism content site with a sound technical foundation. WordPress 6.9.4 is current, PHP 8.2.30 is modern, JNews parent is unmodified (no edits to rescue), and a child theme is now active. The low post count (10 published) is expected — approximately 50 articles are planned for the next two weeks ahead of launch. There are no catastrophic problems.
+enjoy.hr is a pre-launch tourism content site with a sound technical foundation. WordPress 6.9.4 is current, PHP 8.2.30 is modern, the JNews parent theme is unmodified, and a child theme is now active. With 10 published posts and ~50 planned before launch the content pipeline is on track. There are no catastrophic problems, and the site is on a workable trajectory — but this audit uncovered issues in four areas that need attention before launch.
 
-The main areas needing attention are plugin hygiene (a test-data generator is sitting on production, four plugins have pending updates, a migration tool is still active, and Elementor is confirmed unused and should be removed), taxonomy pre-configuration (55 of 80+ categories are empty and should be consolidated), and the gradient overlays Marko flagged — which are identifiable and overridable with a small block of CSS in the child theme.
+**Security** — A 1.8GB full-site backup was publicly accessible by direct URL for approximately two months (Feb 19 – Apr 26). The exposure has been fully remediated: backup deleted, salts rotated, admin password reset, user accounts audited, `wp-config.php` hardened to 600. The root cause is All-in-One WP Migration storing archives in the web root; the plugin should be removed entirely.
 
-Performance and SEO numbers are pending (steps 4–5 below), but the plugin inventory already suggests some risk factors: Elementor plus Google Site Kit plus WebP Express is a heavy stack for a young site, and videojs-html5-player is active and 13MB — worth checking whether video is actually in use.
+**SEO** — JNews and Rank Math are both outputting Open Graph, Twitter Card, and JSON-LD schema tags. JNews wins on first-occurrence, and its homepage `og:description` contains raw admin-UI markup. Anyone sharing the homepage URL on social gets a broken preview. One settings change in JNews Dashboard fixes this immediately.
+
+**Performance** — Cannot be measured yet (PageSpeed Insights API quota not elevated). Plugin weight is a red flag: 76MB Elementor (confirmed unused) + 21MB Site Kit + 20MB WebP Express + 13MB video plugin is an unusually heavy baseline for a pre-launch site. Removing Elementor alone will cut the active plugin footprint significantly.
+
+**Accessibility** — Lighthouse scores 81/100 on local (meets the 80+ target). Five failures are all JNews theme defaults addressable with CSS overrides in the child theme and one `aria-label` content fix. No template copies required.
+
+---
+
+## Top 3 quick wins (do these first)
+
+1. **Disable JNews Open Graph output** — One settings change stops the mangled social preview on the homepage. wp-admin → JNews Dashboard → Social → Open Graph → disable. Takes 2 minutes, fixes the most visible pre-launch SEO issue.
+
+2. **Remove FakerPress and All-in-One WP Migration** — Combined 16MB of plugins with no legitimate role on a live site. FakerPress is a test-data generator; AI1WM caused the security incident above. Deactivate and delete both.
+
+3. **Remove Elementor** — Confirmed unused, 94MB combined with Elementor Pro. Follow the offboarding sequence in Recommended Improvements to avoid orphaned data. Biggest single plugin weight reduction available.
 
 ---
 
 ## Quick wins (low effort, high value)
 
-1. **Remove FakerPress** — 14MB inactive test-data generator sitting on production. Deactivate and delete.
-2. **Deactivate All-in-One WP Migration** — only needed during migrations, currently active and watching all requests.
-3. ~~**Delete the .wpress backup file**~~ — ✓ Done 2026-04-26. See Security section for exposure window and follow-up recommendations.
-4. ~~**Fix wp-config.php permissions**~~ — ✓ Done 2026-04-26. Changed to 600 (owner read/write only).
-5. **Disable JNews meta output** — JNews and Rank Math are both emitting OG/Twitter/Schema tags. JNews's output appears first and contains mangled admin-UI text in the homepage description. In JNews Dashboard → Social → Open Graph, disable JNews's own OG/Twitter output. Rank Math's output is correct.
-6. **Update four overdue plugins** — Elementor, Mailchimp for WP, Rank Math, WP Super Cache all have updates available.
-7. **Delete 55 empty categories** — or at minimum, hide them from navigation. They bloat sitemaps and can hurt crawl efficiency.
-8. **Override the hero gradient** — one 3-line CSS rule in jnews-child/style.css. Fastest visible improvement with zero risk.
+1. **Disable JNews Open Graph output** — Fixes mangled social previews. wp-admin → JNews Dashboard → Social → Open Graph → disable. 2 minutes.
+2. **Remove FakerPress** — 14MB inactive test-data generator. Deactivate and delete from wp-admin → Plugins.
+3. **Remove All-in-One WP Migration** — Root cause of security incident. No ongoing role. Deactivate and delete.
+4. **Update four overdue plugins** — Elementor, Mailchimp for WP, Rank Math, WP Super Cache all have updates available.
+5. **Override the hero gradient** — one 3-line CSS rule in `jnews-child/style.css`. Fastest visible improvement with zero risk.
+6. **Delete 55 empty categories** — bloat sitemaps and nav menus. Consolidate alongside content production.
+7. ~~**Delete the .wpress backup file**~~ — ✓ Done 2026-04-26.
+8. ~~**Fix wp-config.php permissions**~~ — ✓ Done 2026-04-26. Changed to 600.
+9. ~~**Salt rotation**~~ — ✓ Done 2026-04-26. All 8 keys replaced on production + local.
 
 ---
 
@@ -33,7 +48,8 @@ Performance and SEO numbers are pending (steps 4–5 below), but the plugin inve
 
 1. **Gradient overlay overrides** — documented below; ready to implement in child theme.
 2. **Fix duplicate OG/Twitter/Schema output** — disable JNews's meta output (see SEO section). One-time settings change, no code required.
-3. **Remove Elementor** — Confirmed unused on enjoy.hr (Elementor Pro license will be moved to another site). Proper offboarding sequence:
+3. **Remove All-in-One WP Migration** — root cause of the security incident. No ongoing role on this site. Deactivate and delete.
+4. **Remove Elementor** — Confirmed unused on enjoy.hr (Elementor Pro license will be moved to another site). Proper offboarding sequence:
    1. Deactivate Elementor Pro license in Elementor → Settings → License
    2. Deactivate Elementor Pro plugin
    3. Deactivate Elementor (free) plugin
@@ -42,6 +58,12 @@ Performance and SEO numbers are pending (steps 4–5 below), but the plugin inve
 3. **Consolidate category taxonomy** — 55 empty categories of 80+ total is excessive even pre-launch. Consolidate to 8–15 user-intent-based categories (geographic regions, trip types, practical/seasonal). Curate alongside content production over the next 2–4 weeks rather than bulk-deleting now.
 4. **Evaluate videojs-html5-player** — 13MB active plugin. If no video embeds exist in posts, deactivate.
 5. **Implement WebP for all existing images** — WebP Express is installed; verify it is converting and serving correctly.
+6. **Accessibility CSS fixes** — All 5 Lighthouse failures are addressable in `jnews-child/style.css`:
+   - Color contrast: increase contrast on `.jeg_post_category a` badge text
+   - Touch targets: increase padding on small link elements
+   - Link underline: add `text-decoration: underline` for in-content `article a` links
+   - `<main>` landmark: add `role="main"` to the primary content wrapper (or copy the page template to child theme)
+   - Instagram link: add `aria-label` to bare anchor wrapping Instagram embed image
 
 ---
 
@@ -304,7 +326,56 @@ Fixing the duplicate meta output (above) will also resolve the empty-name schema
 
 ### Accessibility
 
-*Not yet measured — Lighthouse accessibility audit via browser on local (enjoyhr.local) pending.*
+**Lighthouse score: 81/100** — meets the 80+ mobile target. 17 checks pass, 5 fail. All failures are JNews theme defaults; none require template overrides — CSS and one content fix cover everything.
+
+| Check | Score | Detail |
+|---|---|---|
+| Color contrast | ✗ | Category badge links (e.g. `.category-money-payments`) have insufficient foreground/background contrast. JNews uses low-opacity colored text on near-white badges. Override with higher-contrast palette in child theme. |
+| `<main>` landmark | ✗ | Page has no `<main>` element — JNews wraps content in generic `<div>` containers. Add `role="main"` via JS or copy the JNews page template to child theme and add `<main>`. |
+| Links without discernible name | ✗ | One Instagram embed link has no text or `aria-label` — just a bare `<a>` wrapping an image without alt text. Add `aria-label` to the Instagram widget or ensure images have alt text. |
+| Links rely on color only | ✗ | Body text links use color but no underline or other visual indicator. Add `text-decoration: underline` for in-content links in child theme CSS. |
+| Touch target size | ✗ | Category badge links and some post links are below 48×48px minimum touch target. Increase padding on `.jeg_post_category a` and similar in child theme CSS. |
+
+All 5 failures are fixable with CSS overrides in `jnews-child/style.css` or minor content corrections — no PHP template copies required except possibly the `<main>` landmark. Re-run after fixes; score should reach 90+.
+
+---
+
+### Security incident — backup file exposure
+
+**Severity:** High  
+**Exposure window:** 2026-02-19 → 2026-04-26 (~2 months)  
+**Status:** ✓ Fully remediated 2026-04-26
+
+#### What happened
+
+All-in-One WP Migration stores backup archives in `wp-content/ai1wm-backups/`. The plugin places an `.htaccess` in that directory, but it only disables directory listing — it does **not** block direct file access. A 1.8GB `.wpress` archive (`enjoy-hr-20260219-184056-4xq1e7ub90td.wpress`) created during the February migration was accessible by direct URL for approximately two months.
+
+The archive contained the complete WordPress file system and a full database dump, including `wp-config.php` with database credentials and authentication keys/salts.
+
+#### What is not known
+
+There is no access log visibility at the shared hosting level. It cannot be determined whether anyone downloaded the file during the exposure window. The filename included a randomised token (`4xq1e7ub90td`) which provides some obscurity, but not security.
+
+#### Response — completed 2026-04-26
+
+| Action | Status |
+|---|---|
+| Backup file deleted from server | ✓ |
+| WordPress authentication keys/salts rotated (production + local) | ✓ |
+| Admin password reset | ✓ |
+| Admin user accounts audited — no unfamiliar accounts found | ✓ |
+| `wp-config.php` permissions hardened to 600 | ✓ |
+
+#### Systemic recommendation
+
+**Remove All-in-One WP Migration entirely.** The plugin's backup feature creates persistent exposure risk on shared hosting where web server configuration is outside your control. The Feb 19 incident is a direct consequence of this architecture — the plugin generated a backup, left it in a web-accessible directory, and its own `.htaccess` protection was insufficient.
+
+Better alternatives:
+- **Hostinger native backups** — daily automatic backups managed at the infrastructure level, not web-accessible
+- **Manual WP-CLI export** — `wp db export` + `tar` of `wp-content/` over SSH, stored in `~/wp-config-backups/` or downloaded locally
+- **UpdraftPlus** (if a plugin is needed) — can write directly to remote destinations (Google Drive, S3) rather than storing in the web root
+
+Deactivate and delete All-in-One WP Migration. It has no ongoing role on this site.
 
 ---
 
@@ -319,11 +390,14 @@ Fixing the duplicate meta output (above) will also resolve the empty-name schema
 | Leftover test files | None ✓ | No info.php, test.php, etc. |
 | Hello World post | Not present ✓ | |
 | wp-config.php permissions | ✓ 600 — fixed 2026-04-26 | Owner read/write only |
+| wp-config.php salts | ✓ Rotated 2026-04-26 | All 8 keys replaced on production + local |
+| Admin password | ✓ Reset 2026-04-26 | |
+| Admin user accounts | ✓ Audited 2026-04-26 | No unfamiliar accounts |
 | .htaccess permissions | 644 ✓ | Standard for Apache |
 | wp-content/ permissions | 755 ✓ | Standard |
 | uploads/ permissions | 755 ✓ | Standard |
-| All-in-One WP Migration | Active ❌ | Leaves an import endpoint exposed; deactivate when not in use |
-| **ai1wm-backups backup file** | ✓ Resolved 2026-04-26 | 1.8GB `.wpress` file (`enjoy-hr-20260219-184056-4xq1e7ub90td.wpress`) was exposed Feb 19 → Apr 26 (~2 months). Folder `.htaccess` blocked directory listing but not direct file access — full site + DB dump was downloadable by URL. File deleted via SSH. **Recommended follow-up:** rotate wp-config.php secret keys/salts (WordPress Security Keys API or Rank Math → General → re-generate). If DB credentials were also in the dump, change the DB password in Hostinger hPanel and update `wp-config.php`. |
+| All-in-One WP Migration | Active ❌ | See security incident above — recommend full removal |
+| Backup file exposure | ✓ Resolved 2026-04-26 | See security incident section above |
 
 ---
 
