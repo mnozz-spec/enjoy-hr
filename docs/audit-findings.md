@@ -462,6 +462,8 @@ All-in-One WP Migration stores backups in the web root with insufficient access 
 
 ## Open questions for Marko
 
+10. **WP Super Cache — caching disabled on both environments.** `$cache_enabled = false` on both staging and production — every request is hitting PHP with no caching benefit. Three options: (a) enable WP Super Cache post-launch once real traffic exists to validate behaviour; (b) replace with **LiteSpeed Cache**, which is Hostinger-native — Hostinger servers return `x-turbo-charged-by: LiteSpeed` headers, meaning the server-level cache is already there and LiteSpeed Cache plugin unlocks it properly; (c) leave disabled and decide before launch. **Recommendation:** evaluate LiteSpeed Cache as a replacement before launch — Hostinger sites consistently perform better with it than WP Super Cache, and the server infrastructure already supports it.
+
 1. ~~**Elementor Pro reactivation**~~ — ✓ Resolved 2026-04-26. Elementor Pro confirmed required: Theme Builder templates for header, footer, single post, archive, 404, search, and popup all active. Both Elementor free and Pro reactivated. Do not remove either.
 2. **Video content:** Is videojs-html5-player actually used? Any posts with video embeds? If not, 13MB plugin can go.
 3. **Social login:** Is jnews-social-login (6.8MB) actively offered to visitors? Any registered users via Facebook/Google?
