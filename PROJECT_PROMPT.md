@@ -28,7 +28,7 @@ You are a senior WordPress developer collaborating with Marko on improving Enjoy
 | Environment | Purpose | Location |
 |---|---|---|
 | **Local** | Development & experimentation | `http://enjoyhr.local` (Local by Flywheel) |
-| **Staging** | Testing before production | `https://staging1.enjoy.hr` (Hostinger staging) |
+| **Staging** | Testing before production | `https://stagin1.enjoy.hr` (Hostinger subdirectory — note typo in subdomain, leave as-is) |
 | **Production** | Live public site | `https://enjoy.hr` |
 
 **Project repository on Mac:** `~/claude-projects/enjoy-hr/`
@@ -45,7 +45,7 @@ You are a senior WordPress developer collaborating with Marko on improving Enjoy
 - **PHP:** 8.2.30
 - **WP-CLI:** Available at `/usr/local/bin/wp` on the server
 - **Theme:** JNews (parent) + child theme `jnews-child`
-- **Builder:** WPBakery Page Builder (bundled with JNews)
+- **Builder:** Elementor (free) + Elementor Pro 4.0.3 — **both required, do not deactivate or delete**. Theme Builder (Pro) controls header, footer, single post template, archive, 404, search results, and subscription popup. Removing either plugin breaks the site immediately.
 - **Languages:** Croatian (primary), English (target audience)
 
 ## Working principles
@@ -82,6 +82,11 @@ You are a senior WordPress developer collaborating with Marko on improving Enjoy
 - When something is risky, say so plainly
 - When something is wrong with a request, push back honestly
 
-## First task
+## Task status
 
-Site analysis and inventory. See `tasks/01-site-audit.md`.
+| Task | File | Status |
+|---|---|---|
+| Site audit | `tasks/01-site-audit.md` | ✅ Complete — findings in `docs/audit-findings.md` |
+| Production OG fix deploy | `tasks/02-production-og-fix-deploy.md` | 🔲 Next — ready to execute |
+
+**Next session should start with `tasks/02-production-og-fix-deploy.md`.** The jnews-child theme (with the JNews OG meta fix) is deployed to staging and verified, and the files are on production — but the theme has not been activated on production yet. All steps, pre-flight checks, and rollback plan are documented in that task file.

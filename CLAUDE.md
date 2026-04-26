@@ -15,14 +15,15 @@ WordPress tourism content site running JNews theme on Hostinger. See `PROJECT_PR
 ├── README.md                  # Setup instructions for Marko
 ├── SETUP_CHECKLIST.md         # Step-by-step initial setup
 ├── tasks/                     # Task briefs for specific work
-│   └── 01-site-audit.md
+│   ├── 01-site-audit.md       # ✅ Complete
+│   └── 02-production-og-fix-deploy.md  # 🔲 Next task
 ├── docs/                      # Project documentation
 │   ├── workflow.md            # Local → staging → production
-│   ├── deployment.md          # How to deploy changes
-│   └── audit-findings.md      # Created during first audit
+│   ├── deployment.md          # How to deploy changes (exact rsync/WP-CLI commands)
+│   └── audit-findings.md      # Full audit — findings, lessons learned, current state
 ├── jnews-child/               # The JNews child theme (Git-tracked source)
-│   ├── style.css
-│   ├── functions.php
+│   ├── style.css              # Theme declaration header
+│   ├── functions.php          # Parent stylesheet enqueue + JNews OG meta fix
 │   ├── screenshot.png
 │   └── ...
 └── snippets/                  # Standalone PHP snippets (reference)
@@ -78,7 +79,7 @@ You edit the source in `~/claude-projects/enjoy-hr/jnews-child/` and WordPress r
 
 1. **Develop locally** in Local by Flywheel — edit files in `~/claude-projects/enjoy-hr/jnews-child/`, view at `http://enjoyhr.local`
 2. **Commit to Git** (feature branch)
-3. **Push child theme to staging** via rsync — test there at `https://staging1.enjoy.hr`
+3. **Push child theme to staging** via rsync — test there at `https://stagin1.enjoy.hr` *(note: subdomain typo is intentional — leave as-is)*
 4. **Verify on staging**
 5. **Push to production** only after staging verification + Marko's approval
 6. **Tag releases** for significant deployments
@@ -97,8 +98,17 @@ Detailed steps in `docs/deployment.md`.
 - `rm -rf` — confirm path with Marko first
 - `wp db drop`, `wp db reset` — confirm
 - `wp search-replace` against production — confirm
-- Plugin/theme deactivation on production — confirm
+- Plugin/theme deactivation or deletion on production — confirm
 - Direct database queries (`wp db query`) — confirm and explain
+
+## Plugins that must NEVER be deactivated or deleted
+
+- **elementor** — homepage and all 10 published posts are Elementor-built; removing it breaks the site immediately
+- **elementor-pro** — Theme Builder controls header, footer, single post template, archive, 404, search results, and subscription popup; removing it collapses the entire site frame
+- **seo-by-rank-math** / **seo-by-rank-math-pro** — all SEO meta, schema, and sitemaps
+- **jnews-essential** — core JNews companion; required for theme function
+
+Lesson learned 2026-04-26: Elementor was incorrectly assessed as unused (file-grep cannot detect page builder postmeta usage). Deletion caused a production outage. See `docs/audit-findings.md` → Lessons Learned.
 
 ## When you encounter the parent JNews theme
 
@@ -131,3 +141,58 @@ Detailed steps in `docs/deployment.md`.
 - PHP errors or warnings in `error_log`
 - Unused plugins consuming resources
 - Plugins that duplicate functionality
+
+---
+
+## Current site state (updated 2026-04-26)
+
+**Read this at the start of every session.**
+
+### Active theme per environment
+
+| Environment | Active theme | OG meta fix live? | Notes |
+|---|---|---|---|
+| Local (enjoyhr.local) | jnews-child | ✅ Yes | Symlinked from repo |
+| Staging (stagin1.enjoy.hr) | jnews-child | ✅ Yes | Verified working |
+| Production (enjoy.hr) | **jnews (parent)** | ❌ No | Child files on server, not activated |
+
+### What the jnews-child theme does
+
+`functions.php` contains two things:
+1. Enqueues the JNews parent stylesheet
+2. Removes JNews's duplicate OG/Twitter/JSON-LD meta output via `remove_action('wp_head', ...)` on the `wp` hook at priority 20 — this fixes `og:description` being poisoned with raw "edit post" admin markup
+
+### Next task
+
+**`tasks/02-production-og-fix-deploy.md`** — complete the production deployment of jnews-child. All steps documented with exact commands, pre-flight checklist, rollback plan, and verification suite. Read that file before starting.
+
+### Audit (Task 01) — closed
+
+Findings are in `docs/audit-findings.md`. Key things to know:
+- Security incident (backup exposure) fully remediated
+- Elementor + Elementor Pro: required infrastructure — Theme Builder powers header, footer, single post, archive, 404, search, popup
+- Plugin "unused" assessment methodology corrected — always check postmeta and `elementor_library` CPT before declaring a page builder unused
+- OG/Twitter meta duplicate conflict still unfixed on production (that's what Task 02 fixes)
+
+### Known production DB state
+
+- Table prefix: `ec_` (non-standard)
+- `theme_mods_jnews-child` row does NOT exist yet on production (needs to be copied from `theme_mods_jnews` as part of Task 02)
+- `theme_mods_jnews-child` row exists on staging (copied during Task 01 staging deploy)
+
+### SSH / deployment quick reference
+
+```bash
+# SSH alias
+ssh enjoyhr
+# = ssh -i ~/.ssh/hostinger_enjoycroatia -p 65002 u320042257@92.112.187.42
+
+# Production WP path
+domains/enjoy.hr/public_html/
+
+# Staging WP path
+domains/enjoy.hr/public_html/stagin1/
+
+# Production DB: u320042257_ctAnI  (user: u320042257_YYtz5)
+# Staging DB:    u320042257_Lmk1i  (user: u320042257_029ST)
+```
