@@ -20,7 +20,7 @@ Performance and SEO numbers are pending (steps 4–5 below), but the plugin inve
 
 1. **Remove FakerPress** — 14MB inactive test-data generator sitting on production. Deactivate and delete.
 2. **Deactivate All-in-One WP Migration** — only needed during migrations, currently active and watching all requests.
-3. **Delete the .wpress backup file** — 1.8GB full-site backup (`wp-content/ai1wm-backups/enjoy-hr-20260219-184056-4xq1e7ub90td.wpress`) is on the server with no access restrictions. Contains entire DB and files. Delete via SSH: `rm domains/enjoy.hr/public_html/wp-content/ai1wm-backups/*.wpress`
+3. ~~**Delete the .wpress backup file**~~ — ✓ Done 2026-04-26. See Security section for exposure window and follow-up recommendations.
 4. **Fix wp-config.php permissions** — currently 644 (world-readable on shared hosting). Change to 600: `chmod 600 domains/enjoy.hr/public_html/wp-config.php`
 5. **Disable JNews meta output** — JNews and Rank Math are both emitting OG/Twitter/Schema tags. JNews's output appears first and contains mangled admin-UI text in the homepage description. In JNews Dashboard → Social → Open Graph, disable JNews's own OG/Twitter output. Rank Math's output is correct.
 6. **Update four overdue plugins** — Elementor, Mailchimp for WP, Rank Math, WP Super Cache all have updates available.
@@ -323,7 +323,7 @@ Fixing the duplicate meta output (above) will also resolve the empty-name schema
 | wp-content/ permissions | 755 ✓ | Standard |
 | uploads/ permissions | 755 ✓ | Standard |
 | All-in-One WP Migration | Active ❌ | Leaves an import endpoint exposed; deactivate when not in use |
-| **ai1wm-backups backup file** | **⚠️ HIGH RISK** | 1.8GB `.wpress` file from Feb 19 migration sitting in `wp-content/ai1wm-backups/`. The folder `.htaccess` only disables directory listing — it does NOT block direct file access. Anyone with the URL can download the full site including the DB dump. Delete immediately. |
+| **ai1wm-backups backup file** | ✓ Resolved 2026-04-26 | 1.8GB `.wpress` file (`enjoy-hr-20260219-184056-4xq1e7ub90td.wpress`) was exposed Feb 19 → Apr 26 (~2 months). Folder `.htaccess` blocked directory listing but not direct file access — full site + DB dump was downloadable by URL. File deleted via SSH. **Recommended follow-up:** rotate wp-config.php secret keys/salts (WordPress Security Keys API or Rank Math → General → re-generate). If DB credentials were also in the dump, change the DB password in Hostinger hPanel and update `wp-config.php`. |
 
 ---
 
