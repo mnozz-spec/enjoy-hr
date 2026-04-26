@@ -33,7 +33,7 @@ claude
 | | URL | Purpose |
 |---|---|---|
 | Local | http://enjoyhr.local | Development |
-| Staging | https://staging1.enjoy.hr | Pre-production testing |
+| Staging | https://stagin1.enjoy.hr | Pre-production testing *(note: "stagin1" typo in subdomain — leave as-is)* |
 | Production | https://enjoy.hr | Live site |
 
 ## Golden rules

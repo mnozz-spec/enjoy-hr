@@ -86,7 +86,7 @@ ssh -i ~/.ssh/hostinger_enjoycroatia -p 65002 u320042257@92.112.187.42 \
 
 ### Step 4 — Copy theme_mods from jnews → jnews-child on staging
 
-Write SQL to a temp file locally, scp to server, execute, delete:
+Write SQL to a temp file locally, scp to server, execute via `mysql` directly (not `wp db query` — see DB backup note below), delete both copies:
 
 ```bash
 cat > /tmp/copy_theme_mods.sql << 'EOF'
@@ -102,8 +102,8 @@ scp -P 65002 -i ~/.ssh/hostinger_enjoycroatia \
   u320042257@92.112.187.42:/tmp/copy_theme_mods.sql
 
 ssh -i ~/.ssh/hostinger_enjoycroatia -p 65002 u320042257@92.112.187.42 \
-  "wp --path=domains/enjoy.hr/public_html/stagin1 db query < /tmp/copy_theme_mods.sql \
-   && rm /tmp/copy_theme_mods.sql"
+  "mysql -h 127.0.0.1 -u u320042257_029ST -p'<staging_db_password>' u320042257_Lmk1i \
+   < /tmp/copy_theme_mods.sql && rm /tmp/copy_theme_mods.sql"
 
 rm /tmp/copy_theme_mods.sql
 ```
@@ -202,6 +202,25 @@ ssh enjoyhr "wp --path=domains/enjoy.hr/public_html/stagin1 plugin update <slug>
 # On production (after staging verified)
 ssh enjoyhr "wp --path=domains/enjoy.hr/public_html plugin update <slug>"
 ```
+
+---
+
+## Database backup — known issue
+
+**`wp db export` is silently broken on this Hostinger account.** It exits 0 but writes no file and produces zero bytes to stdout. `wp db check` and `wp db query` work; the export wrapper does not (likely a Hostinger restriction on the mysqldump subprocess).
+
+Always use `mysqldump` directly for DB backups:
+
+```bash
+# Production backup
+ssh enjoyhr "mysqldump -h 127.0.0.1 -u u320042257_YYtz5 -p'<password>' u320042257_ctAnI > ~/backup-$(date +%Y%m%d).sql"
+scp -P 65002 -i ~/.ssh/hostinger_enjoycroatia \
+  u320042257@92.112.187.42:~/backup-$(date +%Y%m%d).sql \
+  ~/claude-projects/enjoy-hr/backups/
+ssh enjoyhr "rm ~/backup-$(date +%Y%m%d).sql"
+```
+
+Retrieve the password on demand via `ssh enjoyhr "wp --path=domains/enjoy.hr/public_html config get DB_PASSWORD"`.
 
 ---
 

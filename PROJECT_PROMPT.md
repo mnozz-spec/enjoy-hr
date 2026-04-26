@@ -87,6 +87,6 @@ You are a senior WordPress developer collaborating with Marko on improving Enjoy
 | Task | File | Status |
 |---|---|---|
 | Site audit | `tasks/01-site-audit.md` | ✅ Complete — findings in `docs/audit-findings.md` |
-| Production OG fix deploy | `tasks/02-production-og-fix-deploy.md` | 🔲 Next — ready to execute |
+| Production OG fix deploy | `tasks/02-production-og-fix-deploy.md` | ✅ Complete — jnews-child live on production, tagged v1.0.0 (2026-04-26) |
 
-**Next session should start with `tasks/02-production-og-fix-deploy.md`.** The jnews-child theme (with the JNews OG meta fix) is deployed to staging and verified, and the files are on production — but the theme has not been activated on production yet. All steps, pre-flight checks, and rollback plan are documented in that task file.
+No open deployment tasks. Next work items come from audit findings in `docs/audit-findings.md` — see "Recommended improvements" and "Open questions for Marko". All three environments (local, staging, production) are now running jnews-child with the OG meta fix live.

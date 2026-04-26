@@ -52,7 +52,7 @@ rsync -avz --delete \
   --exclude='.git' \
   --exclude='.DS_Store' \
   ~/claude-projects/enjoy-hr/jnews-child/ \
-  enjoyhr:domains/staging1.enjoy.hr/public_html/wp-content/themes/jnews-child/
+  enjoyhr:domains/enjoy.hr/public_html/stagin1/wp-content/themes/jnews-child/
 ```
 
 **Option B — Git pull on server (if we set up a Git remote on the server later):**
@@ -65,7 +65,7 @@ We'll start with rsync. Git-on-server can come later if useful.
 
 ## Step 4 — Test on staging
 
-Open `https://staging1.enjoy.hr` in browser. Test:
+Open `https://stagin1.enjoy.hr` in browser. Test:
 
 - [ ] Does the change look right?
 - [ ] Does it work on mobile view (DevTools responsive mode)?
