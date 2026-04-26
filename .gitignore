@@ -10,3 +10,6 @@
 child-theme/.DS_Store
 *.log
 wp-config.php
+
+# Local backups — large files, never commit
+backups/
