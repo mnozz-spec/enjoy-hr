@@ -14,7 +14,7 @@ enjoy.hr is a pre-launch tourism content site with a sound technical foundation.
 
 **SEO** — JNews and Rank Math are both outputting Open Graph, Twitter Card, and JSON-LD schema tags. JNews wins on first-occurrence, and its homepage `og:description` contains raw admin-UI markup. Anyone sharing the homepage URL on social gets a broken preview. One settings change in JNews Dashboard fixes this immediately.
 
-**Performance** — Cannot be measured yet (PageSpeed Insights API quota not elevated). Plugin weight is a red flag: 76MB Elementor (confirmed unused) + 21MB Site Kit + 20MB WebP Express + 13MB video plugin is an unusually heavy baseline for a pre-launch site. Removing Elementor alone will cut the active plugin footprint significantly.
+**Performance** — Cannot be measured yet (PageSpeed Insights API quota not elevated). Plugin weight is a red flag: 76MB Elementor (required — homepage is built with it) + 21MB Site Kit + 20MB WebP Express + 13MB video plugin is an unusually heavy baseline for a pre-launch site. Elementor cannot be removed without rebuilding the homepage.
 
 **Accessibility** — Lighthouse scores 81/100 on local (meets the 80+ target). Five failures are all JNews theme defaults addressable with CSS overrides in the child theme and one `aria-label` content fix. No template copies required.
 
@@ -26,7 +26,7 @@ enjoy.hr is a pre-launch tourism content site with a sound technical foundation.
 
 2. ~~**Remove FakerPress and All-in-One WP Migration**~~ — ✓ All-in-One WP Migration deactivated and deleted 2026-04-26. **FakerPress still pending** — deactivate and delete from wp-admin → Plugins.
 
-3. **Remove Elementor** — Confirmed unused, 94MB combined with Elementor Pro. Follow the offboarding sequence in Recommended Improvements to avoid orphaned data. Biggest single plugin weight reduction available.
+3. **Decide on Elementor Pro** — Elementor (free) is required and active. Elementor Pro was deactivated on production during cleanup on 2026-04-26 (see Lessons Learned). Confirm with Marko whether Elementor Pro features are used and whether it should be reactivated. Biggest single plugin weight reduction available.
 
 ---
 
@@ -34,7 +34,7 @@ enjoy.hr is a pre-launch tourism content site with a sound technical foundation.
 
 1. **Disable JNews Open Graph output** — Fixes mangled social previews. wp-admin → JNews Dashboard → Social → Open Graph → disable. 2 minutes.
 2. **Remove FakerPress** — 14MB inactive test-data generator. Deactivate and delete from wp-admin → Plugins.
-3. **Update four overdue plugins** — Elementor, Mailchimp for WP, Rank Math, WP Super Cache all have updates available.
+3. **Update overdue plugins** — Mailchimp for WP, Rank Math, WP Super Cache, and Elementor (free) all have updates available.
 4. **Override the hero gradient** — one 3-line CSS rule in `jnews-child/style.css`. Fastest visible improvement with zero risk.
 5. **Delete 55 empty categories** — bloat sitemaps and nav menus. Consolidate alongside content production.
 6. ~~**Delete the .wpress backup file**~~ — ✓ Done 2026-04-26.
@@ -49,12 +49,7 @@ enjoy.hr is a pre-launch tourism content site with a sound technical foundation.
 1. **Gradient overlay overrides** — documented below; ready to implement in child theme.
 2. **Fix duplicate OG/Twitter/Schema output** — disable JNews's meta output (see SEO section). One-time settings change, no code required.
 3. ~~**Remove All-in-One WP Migration**~~ — ✓ Done 2026-04-26. Deactivated and deleted.
-4. **Remove Elementor** — Confirmed unused on enjoy.hr (Elementor Pro license will be moved to another site). Proper offboarding sequence:
-   1. Deactivate Elementor Pro license in Elementor → Settings → License
-   2. Deactivate Elementor Pro plugin
-   3. Deactivate Elementor (free) plugin
-   4. Delete both plugins
-   5. Optional cleanup: remove orphan Elementor post meta (`ec_postmeta WHERE meta_key LIKE '_elementor%'`) and options (`ec_options WHERE option_name LIKE 'elementor%'`) — do this on staging first, confirm no breakage, then production
+4. **Elementor — REQUIRED, do not remove** — The homepage is built with Elementor. Removing Elementor breaks the homepage layout entirely (admin edit-post links render inline, card styling disappears). Confirmed 2026-04-26 when deletion caused a production outage. Elementor (free) has been reactivated. **Elementor Pro status:** was active, then deactivated during cleanup — Marko to confirm whether Pro features are in use and whether to reactivate.
 3. **Consolidate category taxonomy** — 55 empty categories of 80+ total is excessive even pre-launch. Consolidate to 8–15 user-intent-based categories (geographic regions, trip types, practical/seasonal). Curate alongside content production over the next 2–4 weeks rather than bulk-deleting now.
 4. **Evaluate videojs-html5-player** — 13MB active plugin. If no video embeds exist in posts, deactivate.
 5. **Implement WebP for all existing images** — WebP Express is installed; verify it is converting and serving correctly.
@@ -95,10 +90,10 @@ enjoy.hr is a pre-launch tourism content site with a sound technical foundation.
 
 | Plugin | Version | Size | Update? | Flag |
 |---|---|---|---|---|
-| elementor | 4.0.1 | 76MB | **YES** | Largest plugin; update pending |
+| elementor | 4.0.1 | 76MB | **YES** | **REQUIRED** — homepage built with Elementor; update pending |
 | google-site-kit | 1.177.0 | 21MB | No | Heavy; verify GA4 is actually receiving data |
 | webp-express | 0.25.14 | 20MB | No | Verify it is converting and serving correctly |
-| elementor-pro | 4.0.3 | 18MB | No | |
+| elementor-pro | 4.0.3 | 18MB | No | Deactivated on production 2026-04-26 — pending decision on reactivation |
 | videojs-html5-player | 1.1.13 | 13MB | No | Active but is video actually used? |
 | seo-by-rank-math | 1.0.267 | 12MB | **YES** | Update pending |
 | seo-by-rank-math-pro | 3.0.108 | 11MB | No | |
@@ -399,9 +394,27 @@ All-in-One WP Migration stores backups in the web root with insufficient access 
 
 ---
 
+## Lessons learned — 2026-04-26
+
+### Audit finding: "Elementor unused" was incorrect
+
+**What happened:** The audit assessed Elementor as unused and recommended removal. The assessment was based on scanning plugin files and theme PHP for Elementor references. Marko deleted Elementor + Elementor Pro from production, which immediately broke the homepage — admin edit-post links appeared inline, card styling disappeared, and OG meta pulled the broken rendered content as its description.
+
+**Root cause of incorrect finding:** Page builder usage is stored in `wp_postmeta` (specifically `_elementor_data` and `_elementor_edit_mode` keys), not in theme or plugin PHP files. Grep-based analysis of file references cannot detect page builder content — it only finds code-level dependencies. The homepage is an Elementor-built page with no raw PHP template behind it; without Elementor active, WordPress falls back to a stripped render that exposes internal admin markup.
+
+**Correct method before declaring a page builder unused:**
+1. `wp post meta list <page-id> --keys=_elementor_edit_mode` — check if Elementor mode is enabled on key pages
+2. `wp db query "SELECT post_id, meta_key FROM ec_postmeta WHERE meta_key = '_elementor_edit_mode' AND meta_value = 'builder' LIMIT 10;"` — find all Elementor-built posts/pages
+3. Visually inspect the homepage and any other pages that might use builder content
+4. File-level grep is a necessary but not sufficient check — postmeta is the definitive source
+
+**Current state:** Elementor (free) reactivated, site restored. Elementor Pro deactivated — pending Marko's decision. All audit recommendations involving Elementor removal have been corrected above.
+
+---
+
 ## Open questions for Marko
 
-1. ~~**Elementor usage**~~ — Resolved: Elementor is unused on enjoy.hr. Elementor Pro license will be moved to another site. See removal steps under Recommended Improvements.
+1. **Elementor Pro reactivation** — Elementor (free) is active and required. Elementor Pro (4.0.3) was deactivated during cleanup on 2026-04-26. Are any Elementor Pro features used on the site (popups, theme builder, form widgets)? If yes, reactivate Pro. If no, leave deactivated and move the license to another site.
 2. **Video content:** Is videojs-html5-player actually used? Any posts with video embeds? If not, 13MB plugin can go.
 3. **Social login:** Is jnews-social-login (6.8MB) actively offered to visitors? Any registered users via Facebook/Google?
 4. **Category cleanup:** Are all 80+ categories intentional for a future content plan, or can we trim to ~20 active ones now?

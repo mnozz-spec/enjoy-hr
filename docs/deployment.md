@@ -2,6 +2,30 @@
 
 How to push changes from local to staging and production safely.
 
+## Environments
+
+### Production
+- **URL:** https://enjoy.hr
+- **Path on server:** `domains/enjoy.hr/public_html/`
+- **DB:** `u320042257_ctAnI` / user `u320042257_YYtz5`
+- **Table prefix:** `ec_`
+- **DNS:** Cloudflare (not Hostinger)
+
+### Staging
+- **URL:** https://stagin1.enjoy.hr *(note: subdomain has a typo — "stagin1" not "staging1" — leave as-is)*
+- **Path on server:** `domains/enjoy.hr/public_html/stagin1/` *(subdirectory of production's public_html, not a separate domain folder)*
+- **DB:** `u320042257_Lmk1i` / user `u320042257_029ST` — **own database, separate from production**
+- **Table prefix:** `ec_`
+- **DNS:** Cloudflare
+- **Note:** Staging shares the production hosting plan. File and DB isolation are at the WordPress/application level, not OS level. One user account owns both environments.
+
+### Local (development)
+- **URL:** http://enjoyhr.local
+- **Path:** `~/Local Sites/enjoyhr/app/public/`
+- **Child theme source:** `~/claude-projects/enjoy-hr/jnews-child/` (symlinked into Local)
+
+---
+
 ## Pre-deployment checklist
 
 Before any deployment:
@@ -10,121 +34,179 @@ Before any deployment:
 - [ ] Code committed to Git
 - [ ] No uncommitted changes (`git status` clean)
 - [ ] On the correct branch
-- [ ] No debug code left in (`var_dump`, `console.log`, `error_log` calls for debugging)
+- [ ] No debug code left in (`var_dump`, `console.log`, unintended `error_log` calls)
+
+---
 
 ## Standard deployment commands
 
-### Deploy child theme to staging
+### SSH connection
+
+All SSH/rsync uses:
+- Key: `~/.ssh/hostinger_enjoycroatia`
+- Port: `65002`
+- User: `u320042257`
+- Host: `92.112.187.42`
+- Alias: `enjoyhr` (configured in `~/.ssh/config`)
+
+### Step 1 — Dry-run rsync to staging (always do this first)
+
+```bash
+rsync -avzn --delete \
+  --exclude='.git' \
+  --exclude='.gitignore' \
+  --exclude='.DS_Store' \
+  -e 'ssh -i ~/.ssh/hostinger_enjoycroatia -p 65002' \
+  ~/claude-projects/enjoy-hr/jnews-child/ \
+  u320042257@92.112.187.42:domains/enjoy.hr/public_html/stagin1/wp-content/themes/jnews-child/
+```
+
+Review output. If file list and deletions look correct, proceed to live rsync.
+
+### Step 2 — Live rsync to staging
+
+Same command without `-n`:
 
 ```bash
 rsync -avz --delete \
   --exclude='.git' \
   --exclude='.gitignore' \
-  --exclude='node_modules' \
   --exclude='.DS_Store' \
+  -e 'ssh -i ~/.ssh/hostinger_enjoycroatia -p 65002' \
   ~/claude-projects/enjoy-hr/jnews-child/ \
-  enjoyhr:domains/staging1.enjoy.hr/public_html/wp-content/themes/jnews-child/
+  u320042257@92.112.187.42:domains/enjoy.hr/public_html/stagin1/wp-content/themes/jnews-child/
+```
+
+### Step 3 — Activate jnews-child on staging
+
+```bash
+ssh -i ~/.ssh/hostinger_enjoycroatia -p 65002 u320042257@92.112.187.42 \
+  "wp --path=domains/enjoy.hr/public_html/stagin1 theme activate jnews-child"
+```
+
+### Step 4 — Copy theme_mods from jnews → jnews-child on staging
+
+Write SQL to a temp file locally, scp to server, execute, delete:
+
+```bash
+cat > /tmp/copy_theme_mods.sql << 'EOF'
+INSERT INTO ec_options (option_name, option_value, autoload)
+SELECT 'theme_mods_jnews-child', option_value, autoload
+FROM ec_options
+WHERE option_name = 'theme_mods_jnews'
+ON DUPLICATE KEY UPDATE option_value = VALUES(option_value);
+EOF
+
+scp -P 65002 -i ~/.ssh/hostinger_enjoycroatia \
+  /tmp/copy_theme_mods.sql \
+  u320042257@92.112.187.42:/tmp/copy_theme_mods.sql
+
+ssh -i ~/.ssh/hostinger_enjoycroatia -p 65002 u320042257@92.112.187.42 \
+  "wp --path=domains/enjoy.hr/public_html/stagin1 db query < /tmp/copy_theme_mods.sql \
+   && rm /tmp/copy_theme_mods.sql"
+
+rm /tmp/copy_theme_mods.sql
 ```
 
 ### Deploy child theme to production
 
+Only after staging verified and Marko approves:
+
 ```bash
+# Dry-run first
+rsync -avzn --delete \
+  --exclude='.git' \
+  --exclude='.gitignore' \
+  --exclude='.DS_Store' \
+  -e 'ssh -i ~/.ssh/hostinger_enjoycroatia -p 65002' \
+  ~/claude-projects/enjoy-hr/jnews-child/ \
+  u320042257@92.112.187.42:domains/enjoy.hr/public_html/wp-content/themes/jnews-child/
+
+# Live rsync (after dry-run approved)
 rsync -avz --delete \
   --exclude='.git' \
   --exclude='.gitignore' \
-  --exclude='node_modules' \
   --exclude='.DS_Store' \
+  -e 'ssh -i ~/.ssh/hostinger_enjoycroatia -p 65002' \
   ~/claude-projects/enjoy-hr/jnews-child/ \
-  enjoyhr:domains/enjoy.hr/public_html/wp-content/themes/jnews-child/
+  u320042257@92.112.187.42:domains/enjoy.hr/public_html/wp-content/themes/jnews-child/
 ```
 
-### Dry-run first (always recommended)
-
-Add `-n` (or `--dry-run`) to see what *would* happen without actually doing it:
-
-```bash
-rsync -avzn --delete ...
-```
-
-Review the output. If anything looks wrong (deletions you didn't expect, files going to wrong places), stop.
+---
 
 ## Post-deployment verification
 
-After every production deployment:
+After every deployment to staging or production:
 
-1. **Open the site** — does it load?
-2. **Open homepage, an article, a category page** — anything broken?
-3. **Check browser DevTools console** — JS errors?
+1. **Check the site loads** — `curl -sI https://stagin1.enjoy.hr/`
+2. **Check OG tags** — `curl -s https://stagin1.enjoy.hr/ | grep -E 'property="og:|name="twitter:'`
+3. **Open homepage, an article, a category page** — anything broken?
 4. **Check error log:**
    ```bash
-   ssh enjoyhr "tail -50 domains/enjoy.hr/public_html/wp-content/debug.log 2>/dev/null || echo 'no debug log'"
+   ssh -i ~/.ssh/hostinger_enjoycroatia -p 65002 u320042257@92.112.187.42 \
+     "tail -50 domains/enjoy.hr/public_html/stagin1/wp-content/debug.log 2>/dev/null || echo 'no debug log'"
    ```
+
+---
 
 ## Rolling back
 
-If a production deployment breaks something:
+If a deployment breaks something:
 
 ### Option 1 — Roll back via Git (preferred)
 
 ```bash
 cd ~/claude-projects/enjoy-hr
-git log --oneline -10                          # find last good commit
+git log --oneline -10                              # find last good commit
 git checkout <good-commit-hash> -- jnews-child/   # restore those files
-# Now deploy this version to production
-rsync -avz --delete ... (as above)
-git checkout <branch>                          # return to working branch
+rsync -avz --delete ...                           # deploy the restored version
+git checkout main                                  # return to main branch
 ```
 
 ### Option 2 — Roll back via Hostinger backup
 
-hPanel has automated daily backups. Worst case, restore the whole site from backup. This is heavy-handed and may lose recent content edits.
+hPanel has automated daily backups. Worst case, restore the whole site from backup.
 
-## What to NOT deploy via rsync
+---
+
+## What NOT to deploy via rsync
 
 - **`wp-config.php`** — environment-specific, never sync between environments
-- **`uploads/` folder** — managed by WordPress, don't sync
-- **The database** — never synced via file-level tools, use WP-CLI export/import
-- **Plugins from `/wp-content/plugins/`** — install via wp-admin or WP-CLI on each environment
-- **Parent themes** — installed/updated via wp-admin, not synced
+- **`uploads/`** — managed by WordPress, don't sync
+- **The database** — never synced via file tools; use WP-CLI export/import
+- **Plugins** — install via wp-admin or WP-CLI on each environment separately
+- **Parent themes** — updated via wp-admin, not synced
+
+---
 
 ## Database changes
 
-Database changes (search-replace, schema changes, content imports) are NOT done via this deploy flow. They're done directly on each environment with explicit Marko approval each time:
+Done directly on each environment with explicit Marko approval:
 
 ```bash
-ssh enjoyhr
-cd domains/staging1.enjoy.hr/public_html
+ssh -i ~/.ssh/hostinger_enjoycroatia -p 65002 u320042257@92.112.187.42
+cd domains/enjoy.hr/public_html/stagin1
 wp search-replace 'old-string' 'new-string' --dry-run   # ALWAYS dry-run first
 ```
 
-If dry-run looks good, run for real (without `--dry-run`).
+---
 
 ## Plugin updates
 
-Always staging first:
+Staging first, then production:
 
 ```bash
-ssh enjoyhr
-cd domains/staging1.enjoy.hr/public_html
-wp plugin update <plugin-slug> --dry-run
-wp plugin update <plugin-slug>                # if dry-run good
+# On staging
+ssh enjoyhr "wp --path=domains/enjoy.hr/public_html/stagin1 plugin update <slug>"
+
+# On production (after staging verified)
+ssh enjoyhr "wp --path=domains/enjoy.hr/public_html plugin update <slug>"
 ```
 
-Test thoroughly. Then on production:
-
-```bash
-cd domains/enjoy.hr/public_html
-wp plugin update <plugin-slug>
-```
-
-## Theme (parent JNews) updates
-
-JNews is a paid theme — updates come from JNews itself, usually via the Envato Market plugin or manual download.
-
-Never update JNews on production without testing on staging first. Updates can break customizations and override files in unexpected ways.
+---
 
 ## Emergency contacts
 
 - **Hostinger support:** hPanel chat (24/7)
 - **JNews support:** Envato support tickets via Themeforest account
-- **DNS:** Managed in Hostinger hPanel
+- **DNS:** Cloudflare dashboard
