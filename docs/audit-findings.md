@@ -10,7 +10,7 @@
 
 enjoy.hr is a pre-launch tourism content site with a sound technical foundation. WordPress 6.9.4 is current, PHP 8.2.30 is modern, the JNews parent theme is unmodified, and a child theme is now active. With 10 published posts and ~50 planned before launch the content pipeline is on track. There are no catastrophic problems, and the site is on a workable trajectory — but this audit uncovered issues in four areas that need attention before launch.
 
-**Security** — A 1.8GB full-site backup was publicly accessible by direct URL for approximately two months (Feb 19 – Apr 26). The exposure has been fully remediated: backup deleted, salts rotated, admin password reset, user accounts audited, `wp-config.php` hardened to 600. The root cause is All-in-One WP Migration storing archives in the web root; the plugin should be removed entirely.
+**Security** — A 1.8GB full-site backup was publicly accessible by direct URL for approximately two months (Feb 19 – Apr 26). The exposure has been fully remediated: backup deleted, salts rotated, admin password reset, user accounts audited, `wp-config.php` hardened to 600, and All-in-One WP Migration deactivated and deleted. No unfamiliar admin accounts found. Site confirmed loading correctly post-cleanup. Incident closed.
 
 **SEO** — JNews and Rank Math are both outputting Open Graph, Twitter Card, and JSON-LD schema tags. JNews wins on first-occurrence, and its homepage `og:description` contains raw admin-UI markup. Anyone sharing the homepage URL on social gets a broken preview. One settings change in JNews Dashboard fixes this immediately.
 
@@ -24,7 +24,7 @@ enjoy.hr is a pre-launch tourism content site with a sound technical foundation.
 
 1. **Disable JNews Open Graph output** — One settings change stops the mangled social preview on the homepage. wp-admin → JNews Dashboard → Social → Open Graph → disable. Takes 2 minutes, fixes the most visible pre-launch SEO issue.
 
-2. **Remove FakerPress and All-in-One WP Migration** — Combined 16MB of plugins with no legitimate role on a live site. FakerPress is a test-data generator; AI1WM caused the security incident above. Deactivate and delete both.
+2. ~~**Remove FakerPress and All-in-One WP Migration**~~ — ✓ All-in-One WP Migration deactivated and deleted 2026-04-26. **FakerPress still pending** — deactivate and delete from wp-admin → Plugins.
 
 3. **Remove Elementor** — Confirmed unused, 94MB combined with Elementor Pro. Follow the offboarding sequence in Recommended Improvements to avoid orphaned data. Biggest single plugin weight reduction available.
 
@@ -34,13 +34,13 @@ enjoy.hr is a pre-launch tourism content site with a sound technical foundation.
 
 1. **Disable JNews Open Graph output** — Fixes mangled social previews. wp-admin → JNews Dashboard → Social → Open Graph → disable. 2 minutes.
 2. **Remove FakerPress** — 14MB inactive test-data generator. Deactivate and delete from wp-admin → Plugins.
-3. **Remove All-in-One WP Migration** — Root cause of security incident. No ongoing role. Deactivate and delete.
-4. **Update four overdue plugins** — Elementor, Mailchimp for WP, Rank Math, WP Super Cache all have updates available.
-5. **Override the hero gradient** — one 3-line CSS rule in `jnews-child/style.css`. Fastest visible improvement with zero risk.
-6. **Delete 55 empty categories** — bloat sitemaps and nav menus. Consolidate alongside content production.
-7. ~~**Delete the .wpress backup file**~~ — ✓ Done 2026-04-26.
-8. ~~**Fix wp-config.php permissions**~~ — ✓ Done 2026-04-26. Changed to 600.
-9. ~~**Salt rotation**~~ — ✓ Done 2026-04-26. All 8 keys replaced on production + local.
+3. **Update four overdue plugins** — Elementor, Mailchimp for WP, Rank Math, WP Super Cache all have updates available.
+4. **Override the hero gradient** — one 3-line CSS rule in `jnews-child/style.css`. Fastest visible improvement with zero risk.
+5. **Delete 55 empty categories** — bloat sitemaps and nav menus. Consolidate alongside content production.
+6. ~~**Delete the .wpress backup file**~~ — ✓ Done 2026-04-26.
+7. ~~**Fix wp-config.php permissions**~~ — ✓ Done 2026-04-26. Changed to 600.
+8. ~~**Salt rotation**~~ — ✓ Done 2026-04-26. All 8 keys replaced on production + local.
+9. ~~**Remove All-in-One WP Migration**~~ — ✓ Done 2026-04-26. Deactivated and deleted.
 
 ---
 
@@ -48,7 +48,7 @@ enjoy.hr is a pre-launch tourism content site with a sound technical foundation.
 
 1. **Gradient overlay overrides** — documented below; ready to implement in child theme.
 2. **Fix duplicate OG/Twitter/Schema output** — disable JNews's meta output (see SEO section). One-time settings change, no code required.
-3. **Remove All-in-One WP Migration** — root cause of the security incident. No ongoing role on this site. Deactivate and delete.
+3. ~~**Remove All-in-One WP Migration**~~ — ✓ Done 2026-04-26. Deactivated and deleted.
 4. **Remove Elementor** — Confirmed unused on enjoy.hr (Elementor Pro license will be moved to another site). Proper offboarding sequence:
    1. Deactivate Elementor Pro license in Elementor → Settings → License
    2. Deactivate Elementor Pro plugin
@@ -344,7 +344,7 @@ All 5 failures are fixable with CSS overrides in `jnews-child/style.css` or mino
 
 **Severity:** High  
 **Exposure window:** 2026-02-19 → 2026-04-26 (~2 months)  
-**Status:** ✓ Fully remediated 2026-04-26
+**Status:** ✓ Fully resolved 2026-04-26 — all response actions complete, plugin removed, site verified
 
 #### What happened
 
@@ -365,17 +365,15 @@ There is no access log visibility at the shared hosting level. It cannot be dete
 | Admin password reset | ✓ |
 | Admin user accounts audited — no unfamiliar accounts found | ✓ |
 | `wp-config.php` permissions hardened to 600 | ✓ |
+| All-in-One WP Migration deactivated and deleted | ✓ |
+| `ai1wm-backups/` folder confirmed empty / removed | ✓ |
+| Site verified loading correctly post-cleanup | ✓ |
 
-#### Systemic recommendation
+**Incident closed.**
 
-**Remove All-in-One WP Migration entirely.** The plugin's backup feature creates persistent exposure risk on shared hosting where web server configuration is outside your control. The Feb 19 incident is a direct consequence of this architecture — the plugin generated a backup, left it in a web-accessible directory, and its own `.htaccess` protection was insufficient.
+#### Systemic note
 
-Better alternatives:
-- **Hostinger native backups** — daily automatic backups managed at the infrastructure level, not web-accessible
-- **Manual WP-CLI export** — `wp db export` + `tar` of `wp-content/` over SSH, stored in `~/wp-config-backups/` or downloaded locally
-- **UpdraftPlus** (if a plugin is needed) — can write directly to remote destinations (Google Drive, S3) rather than storing in the web root
-
-Deactivate and delete All-in-One WP Migration. It has no ongoing role on this site.
+All-in-One WP Migration stores backups in the web root with insufficient access controls on shared hosting. The plugin has been removed. If a backup plugin is needed in future, prefer one that writes to remote destinations (Google Drive, S3) rather than a local web-accessible directory — or use Hostinger's native infrastructure-level backups.
 
 ---
 
@@ -396,7 +394,7 @@ Deactivate and delete All-in-One WP Migration. It has no ongoing role on this si
 | .htaccess permissions | 644 ✓ | Standard for Apache |
 | wp-content/ permissions | 755 ✓ | Standard |
 | uploads/ permissions | 755 ✓ | Standard |
-| All-in-One WP Migration | Active ❌ | See security incident above — recommend full removal |
+| All-in-One WP Migration | ✓ Deleted 2026-04-26 | Removed as root cause of security incident |
 | Backup file exposure | ✓ Resolved 2026-04-26 | See security incident section above |
 
 ---
@@ -411,4 +409,4 @@ Deactivate and delete All-in-One WP Migration. It has no ongoing role on this si
 6. **Gradient opacity preferences:** The override values above (`.45`, `.6`) are suggestions. What feel are you going for — barely-there scrim, or still a strong overlay but softer?
 7. **Rank Math vs. Yoast:** You have Rank Math active. No Yoast. Was this a deliberate switch? Anything worth preserving from a previous Yoast setup?
 8. **Twitter/X handle:** Once you have an active X account for enjoy.hr, add it in Rank Math → Social → Twitter so `twitter:site` is populated.
-9. ~~**wp-config.php permissions and backup file**~~ — Addressed in Quick Wins #3 and #4. Action needed immediately.
+9. ~~**wp-config.php permissions, backup file, and AI1WM removal**~~ — ✓ All resolved 2026-04-26. Incident closed.
