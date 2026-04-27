@@ -49,3 +49,30 @@ Text Domain: jnews-child
 .jeg_cat_overlay.dark .jeg_cat_bg:after {
     background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.25) 100%) !important;
 }
+
+/* =============================================================================
+   ACCESSIBILITY FIXES
+   Resolves 3 of 5 Lighthouse failures (score 81 → target 90+)
+   Audit reference: docs/audit-findings.md → Accessibility
+   ============================================================================= */
+
+/* FIX 2 — Touch target size on category badge links
+   Default renders at ~20px height (fail, needs 44px minimum)
+   inline-flex + min-height expands the hit area without changing visual text size
+   Overrides: jnews/assets/css/main.css .jeg_post_category a */
+.jeg_post_category a {
+    min-height: 44px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* FIX 3 — Link underlines in article body content
+   WCAG 1.4.1: links in text blocks must be distinguishable beyond color alone
+   Scoped to .content-inner to avoid nav, card titles, badges, and buttons
+   Overrides: jnews/assets/css/main.css a { text-decoration: none } */
+.jeg_inner_content .content-inner a:not(.btn):not(.jeg_readmore):not(.wp-block-button__link) {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}

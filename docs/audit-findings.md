@@ -53,12 +53,12 @@ enjoy.hr is a pre-launch tourism content site with a sound technical foundation.
 3. **Consolidate category taxonomy** — 55 empty categories of 80+ total is excessive even pre-launch. Consolidate to 8–15 user-intent-based categories (geographic regions, trip types, practical/seasonal). Curate alongside content production over the next 2–4 weeks rather than bulk-deleting now.
 4. **Evaluate videojs-html5-player** — 13MB active plugin. If no video embeds exist in posts, deactivate.
 5. **Implement WebP for all existing images** — WebP Express is installed; verify it is converting and serving correctly.
-6. **Accessibility CSS fixes** — All 5 Lighthouse failures are addressable in `jnews-child/style.css`:
-   - Color contrast: increase contrast on `.jeg_post_category a` badge text
-   - Touch targets: increase padding on small link elements
-   - Link underline: add `text-decoration: underline` for in-content `article a` links
-   - `<main>` landmark: add `role="main"` to the primary content wrapper (or copy the page template to child theme)
-   - Instagram link: add `aria-label` to bare anchor wrapping Instagram embed image
+6. **Accessibility CSS fixes** — 4 of 5 Lighthouse failures addressed (see Task 06 below):
+   - ~~Color contrast on `.jeg_post_category a` badge text~~ — **intentionally skipped**: white text on coral badges (`#fff` on `#f0785f`) is the desired aesthetic. WCAG AA contrast failure accepted as a deliberate design tradeoff. Score will be lower as a result.
+   - Touch targets: increase padding on small link elements ✅ applied
+   - Link underline: add `text-decoration: underline` for in-content `article a` links ✅ applied
+   - `<main>` landmark: copy 6 JNews page templates to child theme, add `role="main"` ✅ applied
+   - Instagram link: widget removed entirely — no active curated feed to showcase
 
 ---
 
@@ -435,6 +435,18 @@ All-in-One WP Migration stores backups in the web root with insufficient access 
 4. **Assume required until proven otherwise** — file-level grep is evidence of absence only for code-level dependencies. Treat absence of grep hits as inconclusive for page builders.
 
 **Future audit rule:** Never declare a page builder plugin unused based on file scanning alone. Postmeta and custom post types are the authoritative source.
+
+---
+
+### Live site behavior requires direct verification, not inference from config — 2026-04-27
+
+**What happened:** During a widget audit, the `widget_jnews_instagram` option showed instance 1 configured with `username: natgeotravel`. From this, the initial finding concluded "NatGeo Travel's Instagram photos are being displayed on the homepage." That finding was reported as fact.
+
+**Why it was wrong:** The conclusion was inference from a configuration value, not evidence from the rendered output. Direct verification — curling the production homepage, checking the database for a `natgeotravel` feed cache — showed the widget silently fails: no cache entry for NatGeo exists, no NatGeo references appear in the production HTML. The Instagram Basic Display API cannot fetch arbitrary public profiles; it only returns the authenticated user's own media. The widget had a stale username field that was never updated from the theme demo defaults, but the configured value had no effect on what was actually rendered.
+
+**Actual state:** Instance 1 renders nothing (API call silently fails). Instance 2, connected to the authenticated `enjoy_hr` account, renders correctly. No third-party content was ever displayed.
+
+**Rule for future audits:** Claims about live site behavior — what content appears, what a widget shows, whether a feature is visible to visitors — must be verified against the rendered HTML output (curl, browser, Lighthouse snapshot), not inferred from database configuration values or plugin settings. Configuration describes intent; rendered output is the truth.
 
 ---
 
