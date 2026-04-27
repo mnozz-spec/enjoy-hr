@@ -64,10 +64,16 @@ enjoy.hr is a pre-launch tourism content site with a sound technical foundation.
 
 ## Watch-list (monitor, no immediate action)
 
-1. **jnews-social-login (6.8MB)** — active but verify if social login is actually offered to users; if not, deactivate.
+1. ~~**jnews-social-login (6.8MB)**~~ — ✓ Deleted 2026-04-27. Never configured, zero social users. See Plugin evaluation below.
 2. **google-site-kit (21MB)** — heavy plugin; once analytics are verified working, consider lighter alternatives (direct GA4 snippet via child theme).
 3. **hello-elementor theme** — inactive but has update available; either update or delete.
 4. **enjoy-croatia theme folder** — abandoned, should be deleted from `wp-content/themes/` once decision is made.
+
+---
+
+## Pending manual fix in wp-admin
+
+**Social counter widget contains Jegtheme demo data** — the `jnews_social_counter` widget (present in the sidebar/footer widget area) was never updated after theme installation. It still references `jegtheme` as the Facebook page and `envato` as the Instagram account. Marko needs to either: (a) update the widget with enjoy.hr's actual social accounts, or (b) remove the widget entirely if no social follower counts are to be displayed. Fix via wp-admin → Appearance → Widgets. Non-blocking.
 
 ---
 
