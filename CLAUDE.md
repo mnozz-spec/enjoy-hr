@@ -144,7 +144,7 @@ Lesson learned 2026-04-26: Elementor was incorrectly assessed as unused (file-gr
 
 ---
 
-## Current site state (updated 2026-04-26)
+## Current site state (updated 2026-04-27)
 
 **Read this at the start of every session.**
 
@@ -173,6 +173,10 @@ Findings are in `docs/audit-findings.md`. Key things to know:
 - Elementor + Elementor Pro: required infrastructure — Theme Builder powers header, footer, single post, archive, 404, search, popup
 - Plugin "unused" assessment methodology corrected — always check postmeta and `elementor_library` CPT before declaring a page builder unused
 - OG/Twitter meta fix live on all three environments as of 2026-04-26
+
+### Known service accounts and management plugins
+
+**`manage-system-user` (user ID 5, administrator)** — legitimate service account created automatically by the **Elementor Manage plugin** (plugin slug: `manage`, version 1.0.4, author: Elementor.com). This plugin connects the site to Elementor's remote multi-site management dashboard. The account has no email by design; meta keys `_manage_system_user = yes` are the plugin's own markers. Investigated and confirmed legitimate 2026-04-27. Do not delete this user or the plugin unless Marko decides to disconnect from Elementor Manage.
 
 ### Known production DB state
 

@@ -391,12 +391,25 @@ All-in-One WP Migration stores backups in the web root with insufficient access 
 | wp-config.php permissions | ✓ 600 — fixed 2026-04-26 | Owner read/write only |
 | wp-config.php salts | ✓ Rotated 2026-04-26 | All 8 keys replaced on production + local |
 | Admin password | ✓ Reset 2026-04-26 | |
-| Admin user accounts | ✓ Audited 2026-04-26 | No unfamiliar accounts |
+| Admin user accounts | ✓ Audited 2026-04-26 + 2026-04-27 | See note on manage-system-user below |
 | .htaccess permissions | 644 ✓ | Standard for Apache |
 | wp-content/ permissions | 755 ✓ | Standard |
 | uploads/ permissions | 755 ✓ | Standard |
 | All-in-One WP Migration | ✓ Deleted 2026-04-26 | Removed as root cause of security incident |
 | Backup file exposure | ✓ Resolved 2026-04-26 | See security incident section above |
+
+---
+
+## Security investigation — manage-system-user (2026-04-27)
+
+**Severity:** Initially flagged as high — resolved as legitimate  
+**Status:** ✓ Closed 2026-04-27
+
+**Finding:** Administrator account `manage-system-user` (user ID 5, no email, registered 2026-04-26 13:51:56) was discovered during a routine user audit. An unknown active plugin called `manage` (v1.0.4) was simultaneously identified — not present in the original Task 01 audit plugin list.
+
+**Investigation result:** Both are legitimate. The `manage` plugin is Elementor's official multi-site management plugin (Plugin URI: elementor.com, GPL-3 licensed). It automatically creates the `manage-system-user` administrator service account on installation. The plugin was installed 2026-04-26 at 13:51 (files all share this timestamp). The user meta keys `_manage_system_user = yes` and `_manage_system_user_created_at` are the plugin's own markers. File system, `.htaccess`, and uploads directories contained no webshells or unexpected PHP files. No malicious indicators found.
+
+**Action:** No remediation required. Account is the plugin's service user — do not delete. Document for future sessions so this account is not re-flagged.
 
 ---
 
