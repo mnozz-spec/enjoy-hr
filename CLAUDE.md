@@ -15,8 +15,9 @@ WordPress tourism content site running JNews theme on Hostinger. See `PROJECT_PR
 ├── README.md                  # Setup instructions for Marko
 ├── SETUP_CHECKLIST.md         # Step-by-step initial setup
 ├── tasks/                     # Task briefs for specific work
-│   ├── 01-site-audit.md       # ✅ Complete
-│   └── 02-production-og-fix-deploy.md  # ✅ Complete
+│   ├── 01-site-audit.md                  # ✅ Complete
+│   ├── 02-production-og-fix-deploy.md    # ✅ Complete
+│   └── 07-affiliate-disclosure.md        # ⬅ Next task
 ├── docs/                      # Project documentation
 │   ├── workflow.md            # Local → staging → production
 │   ├── deployment.md          # How to deploy changes (exact rsync/WP-CLI commands)
@@ -144,35 +145,66 @@ Lesson learned 2026-04-26: Elementor was incorrectly assessed as unused (file-gr
 
 ---
 
-## Current site state (updated 2026-04-27)
+## Current site state (updated 2026-05-19)
 
 **Read this at the start of every session.**
 
 ### Active theme per environment
 
-| Environment | Active theme | OG meta fix live? | Notes |
+| Environment | Active theme | Accessibility fixes | Notes |
 |---|---|---|---|
 | Local (enjoyhr.local) | jnews-child | ✅ Yes | Symlinked from repo |
 | Staging (stagin1.enjoy.hr) | jnews-child | ✅ Yes | Verified working |
-| Production (enjoy.hr) | **jnews-child** | ✅ Yes | Task 02 complete — activated 2026-04-26, tagged v1.0.0 |
+| Production (enjoy.hr) | **jnews-child** | ✅ Yes | Task 06 complete — deployed 2026-05-19, tagged v1.2.0 |
 
 ### What the jnews-child theme does
 
-`functions.php` contains two things:
+**`functions.php`** — two things:
 1. Enqueues the JNews parent stylesheet
-2. Removes JNews's duplicate OG/Twitter/JSON-LD meta output via `remove_action('wp_head', ...)` on the `wp` hook at priority 20 — this fixes `og:description` being poisoned with raw "edit post" admin markup
+2. Removes JNews's duplicate OG/Twitter/JSON-LD meta output via `remove_action('wp_head', ...)` on the `wp` hook at priority 20 — fixes `og:description` being poisoned with raw "edit post" admin markup
+
+**`style.css`** — two groups of overrides:
+1. Gradient overlay overrides (Condé Nast aesthetic — photos breathe, minimal dark fade at bottom only)
+2. Accessibility fixes: touch target size on category badges (min-height 44px) + link underlines in article body content
+
+**Template overrides** (all add `role="main"` to `.jeg_content`):
+- `template-builder.php` — homepage (Landing Page template)
+- `index.php`, `category.php`, `archive.php`, `search.php`, `404.php`
+- `single-custom-post-template.php`
+- `fragment/post/single-post-1.php` — single post pages (template style 1)
+
+### Git tags
+
+| Tag | Description |
+|---|---|
+| v1.0.0 | First production deploy: JNews child theme + OG meta fix |
+| v1.1.0 | Visual milestone: Condé Nast gradient overrides |
+| v1.2.0 | Accessibility milestone: touch targets, link underlines, `<main>` landmark, Instagram widget removed |
 
 ### Open tasks
 
-No open deployment tasks. Next work items come from the audit findings in `docs/audit-findings.md` — see "Recommended improvements" and "Open questions for Marko".
+**Next up: Task 07 — affiliate disclosure** (`tasks/07-affiliate-disclosure.md`)
 
-### Audit (Task 01) — closed | Deployment (Task 02) — closed
+**Also pending: noindex investigation** — User asked to remove noindex tags on 2026-05-19. Quick check found `blog_public = 1` (WordPress itself is NOT blocking search engines). Root cause not yet identified — Rank Math or another plugin may be adding noindex to specific page types. Start new session by curling the live site and inspecting `<meta name="robots">` tags on homepage, single post, and category pages.
 
-Findings are in `docs/audit-findings.md`. Key things to know:
+### Closed tasks
+
+| Task | Description |
+|---|---|
+| Task 01 | Site audit — findings in `docs/audit-findings.md` |
+| Task 02 | Production OG fix deploy — jnews-child activated on production |
+| Task 03 | Plugin updates (Mailchimp, Rank Math, WP Super Cache) |
+| Task 04 | Gradient overrides — Condé Nast aesthetic |
+| Task 05 | Plugin removal — videojs-html5-player + jnews-social-login deleted |
+| Task 06 | Accessibility — Lighthouse fixes (touch targets, link underlines, landmark, Instagram widget removed) |
+
+### Key facts established by previous sessions
+
 - Security incident (backup exposure) fully remediated
 - Elementor + Elementor Pro: required infrastructure — Theme Builder powers header, footer, single post, archive, 404, search, popup
 - Plugin "unused" assessment methodology corrected — always check postmeta and `elementor_library` CPT before declaring a page builder unused
 - OG/Twitter meta fix live on all three environments as of 2026-04-26
+- Accessibility fix 1 (badge color contrast) intentionally skipped — white-on-coral is deliberate design choice, WCAG AA tradeoff accepted
 
 ### Known service accounts and management plugins
 
