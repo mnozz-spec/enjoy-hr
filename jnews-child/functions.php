@@ -33,3 +33,32 @@ function enjoy_disable_jnews_social_meta() {
         error_log( 'jnews-child: JNews_Meta_Header class not found, social meta override skipped' );
     }
 }
+
+/*
+ * Inject the Advanced Ads "below-header" manual placement into the JNews
+ * header-bottom ad slot.
+ *
+ * JNews's header.php renders `<div class="jeg_ad jeg_ad_top jnews_header_bottom_ads">`
+ * and fires `do_action('jnews_header_bottom_ads')` inside it. When the JNews
+ * Customizer toggle (jnews_ads_header_bottom_enable) is OFF, JNews does not
+ * attach its own callback to that action — leaving the wrapper empty for us.
+ *
+ * Advanced Ads' "Custom Position" placement type is a paid add-on, so we use
+ * a free Manual Placement (slug: below-header) and call it from this hook.
+ * the_ad_placement() is a no-op if the placement doesn't exist, so this
+ * snippet is safe even before the placement is created in wp-admin.
+ *
+ * Setup: Advanced Ads → Placements → New Placement
+ *        Name: Below header
+ *        Type: Manual Placement
+ *        Slug: below-header   (MUST match the slug passed below — Advanced Ads
+ *                              stores placements as posts and WordPress auto-
+ *                              hyphenates the slug from the title)
+ *        Item: "Below Header Rotation" group
+ */
+add_action( 'jnews_header_bottom_ads', 'enjoy_inject_below_header_ad' );
+function enjoy_inject_below_header_ad() {
+    if ( function_exists( 'the_ad_placement' ) ) {
+        the_ad_placement( 'below-header' );
+    }
+}
