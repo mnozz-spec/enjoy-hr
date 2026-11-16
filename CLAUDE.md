@@ -33,10 +33,12 @@ WordPress tourism content site running JNews theme on Hostinger. See `PROJECT_PR
 The `jnews-child/` folder is symlinked into Local's WordPress install:
 
 ```
-~/Local Sites/enjoyhr/app/public/wp-content/themes/jnews-child  →  ~/claude-projects/enjoy-hr/jnews-child
+/Volumes/External - 4TB/Local Sites/enjoyhr/app/public/wp-content/themes/jnews-child  →  ~/claude-projects/enjoy-hr/jnews-child
 ```
 
 You edit the source in `~/claude-projects/enjoy-hr/jnews-child/` and WordPress reads it through the symlink.
+
+**The Local site lives on the external drive "External - 4TB"** (moved from `~/Local Sites/enjoyhr` on 2026-11-16). The drive must be mounted before starting the site in Local. The site's MySQL data did not move — Local keeps it on the internal drive at `~/Library/Application Support/Local/run/oYGNnL-sq/mysql/data`. Pre-move Local registry backup: `~/Library/Application Support/Local/sites.json.bak-pre-external-move-20261116-1105`.
 
 ## Code conventions
 

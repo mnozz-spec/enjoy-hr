@@ -21,7 +21,7 @@ How to push changes from local to staging and production safely.
 
 ### Local (development)
 - **URL:** http://enjoyhr.local
-- **Path:** `~/Local Sites/enjoyhr/app/public/`
+- **Path:** `/Volumes/External - 4TB/Local Sites/enjoyhr/app/public/`
 - **Child theme source:** `~/claude-projects/enjoy-hr/jnews-child/` (symlinked into Local)
 
 ---

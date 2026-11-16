@@ -41,7 +41,7 @@ Then test: `ssh enjoyhr` — should land you in the shell with no password promp
 
 - [x] Downloaded and installed Local
 - [x] Local site created: `enjoyhr` / `enjoyhr.local` / PHP 8.2
-- [x] Site path: `~/Local Sites/enjoyhr/`
+- [x] Site path: `/Volumes/External - 4TB/Local Sites/enjoyhr/`
 
 ---
 
@@ -72,7 +72,7 @@ Then test: `ssh enjoyhr` — should land you in the shell with no password promp
 - [x] Project files (PROJECT_PROMPT.md, CLAUDE.md, etc.) in place
 - [x] Git repo initialized, remote added, pushed to GitHub
 - [x] `jnews-child/` child theme created in repo
-- [x] Symlink in place: `~/Local Sites/enjoyhr/app/public/wp-content/themes/jnews-child` → `~/claude-projects/enjoy-hr/jnews-child`
+- [x] Symlink in place: `/Volumes/External - 4TB/Local Sites/enjoyhr/app/public/wp-content/themes/jnews-child` → `~/claude-projects/enjoy-hr/jnews-child`
 
 ---
 

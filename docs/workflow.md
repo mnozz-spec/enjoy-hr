@@ -22,7 +22,7 @@ The child theme — which is what we actually edit — lives in this repo at:
 
 It's symlinked into Local's WordPress install at:
 ```
-~/Local Sites/enjoyhr/app/public/wp-content/themes/jnews-child/
+/Volumes/External - 4TB/Local Sites/enjoyhr/app/public/wp-content/themes/jnews-child/
 ```
 
 Edit the files in `~/claude-projects/enjoy-hr/jnews-child/`. Reload `http://enjoyhr.local` in your browser. Iterate.

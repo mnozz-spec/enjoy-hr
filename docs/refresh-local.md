@@ -50,7 +50,7 @@ rsync -avz --progress \
   --exclude='.DS_Store' \
   -e 'ssh -i ~/.ssh/hostinger_enjoycroatia -p 65002' \
   u320042257@92.112.187.42:domains/enjoy.hr/public_html/ \
-  "$HOME/Local Sites/enjoyhr/app/public/"
+  "/Volumes/External - 4TB/Local Sites/enjoyhr/app/public/"
 ```
 
 This transfers ~3.6GB — allow several minutes.
@@ -76,7 +76,7 @@ Set up the PATH helper, then run both replacements:
 
 ```bash
 MYSQL_BIN="$HOME/Library/Application Support/Local/lightning-services/mysql-8.0.35+4/bin/darwin-arm64/bin"
-WP="PATH=\"$MYSQL_BIN:$PATH\" wp --path=\"$HOME/Local Sites/enjoyhr/app/public\""
+WP="PATH=\"$MYSQL_BIN:$PATH\" wp --path=\"/Volumes/External - 4TB/Local Sites/enjoyhr/app/public\""
 
 # Dry-run first — review counts before committing
 eval "$WP search-replace 'https://enjoy.hr' 'http://enjoyhr.local' --dry-run"
@@ -91,8 +91,8 @@ eval "$WP search-replace 'enjoy.hr' 'enjoyhr.local'"
 
 ```bash
 MYSQL_BIN="$HOME/Library/Application Support/Local/lightning-services/mysql-8.0.35+4/bin/darwin-arm64/bin"
-PATH="$MYSQL_BIN:$PATH" wp cache flush --path="$HOME/Local Sites/enjoyhr/app/public"
-rm -rf "$HOME/Local Sites/enjoyhr/app/public/wp-content/cache/"
+PATH="$MYSQL_BIN:$PATH" wp cache flush --path="/Volumes/External - 4TB/Local Sites/enjoyhr/app/public"
+rm -rf "/Volumes/External - 4TB/Local Sites/enjoyhr/app/public/wp-content/cache/"
 ```
 
 ## Step 6 — Verify

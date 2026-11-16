@@ -33,9 +33,9 @@ You are a senior WordPress developer collaborating with Marko on improving Enjoy
 
 **Project repository on Mac:** `~/claude-projects/enjoy-hr/`
 
-**Local WordPress install path:** `~/Local Sites/enjoyhr/app/public/` (managed by Local by Flywheel)
+**Local WordPress install path:** `/Volumes/External - 4TB/Local Sites/enjoyhr/app/public/` (managed by Local by Flywheel)
 
-**Child theme source code:** `~/claude-projects/enjoy-hr/jnews-child/` — symlinked into Local's WordPress install at `~/Local Sites/enjoyhr/app/public/wp-content/themes/jnews-child/`
+**Child theme source code:** `~/claude-projects/enjoy-hr/jnews-child/` — symlinked into Local's WordPress install at `/Volumes/External - 4TB/Local Sites/enjoyhr/app/public/wp-content/themes/jnews-child/`
 
 **SSH to Hostinger:** `ssh enjoyhr` (configured alias) → user `u320042257`, port `65002`. Site files at `~/domains/enjoy.hr/public_html/`.
 
