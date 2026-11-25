@@ -153,7 +153,7 @@ Lesson learned 2026-04-26: Elementor was incorrectly assessed as unused (file-gr
 
 ### ⚠️ DEPLOY TRIPWIRE — read before any theme rsync
 
-**Production and staging `jnews-child/functions.php` are DIVERGENT from git.** Both environments contain a working `enjoy_affiliate_*` block (the Task 07 affiliate disclosure code) that is in no tag. It was committed on 2026-11-25 on branch `feature/design-review-followup` (not yet merged to `main`, not tagged), so `main` and every tag up to `v1.3.0` still lack it. A naive `rsync --delete` of any tag (including `v1.3.0`) to either environment will **silently clobber the live affiliate code**.
+**Production and staging `jnews-child/functions.php` are DIVERGENT from git.** Both environments contain a working `enjoy_affiliate_*` block (the Task 07 affiliate disclosure code) that is in no tag. It was committed and merged to `main` on 2026-11-25 (commit `b7310db`, not tagged), so `main` matches both environments but every tag up to `v1.3.0` still lacks it. A naive `rsync --delete` of any tag (including `v1.3.0`) to either environment will **silently clobber the live affiliate code**.
 
 Until the Task 07 reckoning is done (see `tasks/07-affiliate-reckoning-followup.md`), any theme rsync MUST either:
 1. Use `--exclude=functions.php` (other theme files can rsync safely), OR
@@ -177,13 +177,13 @@ Full critique: `.impeccable/critique/2026-11-25T10-16-21Z__enjoy-hr.md` (18/40).
 - Sitemap 404 fixed with `wp rewrite flush` (rules had gone stale).
 - Homepage (398) demo tagline replaced in `_elementor_data`.
 
-**Child theme 1.5.0, deployed to staging AND production, committed on branch `feature/design-review-followup` (not merged to `main`, not tagged):** reading-measure/contrast/badge CSS appended to `style.css`, `inc/empty-states.php` + `assets/css/empty-states.css`, and helpful empty states in `404.php`, `category.php`, `archive.php`, `search.php`. Server-side theme backups: `~/backups/staging-jnews-child-pre-review-20261125-1045.tgz`, `~/backups/prod-jnews-child-pre-review-20261125-1033.tgz`. Production verified by page fetch plus DOM measurements at 375px (no screenshots at phone width).
+**Child theme 1.5.0, deployed to staging AND production, committed on `main` (`b7310db`, not tagged):** reading-measure/contrast/badge CSS appended to `style.css`, `inc/empty-states.php` + `assets/css/empty-states.css`, and helpful empty states in `404.php`, `category.php`, `archive.php`, `search.php`. Server-side theme backups: `~/backups/staging-jnews-child-pre-review-20261125-1045.tgz`, `~/backups/prod-jnews-child-pre-review-20261125-1033.tgz`. Production verified by page fetch plus DOM measurements at 375px (no screenshots at phone width).
 
 Still open from the review: homepage restructure (Elementor), About/Privacy pages, author bios, table of contents, related posts.
 
 ### ✅ Elementor Pro removed from use — staging AND production (2026-11-25)
 
-The site runs without an Elementor Pro licence (Elementor free stays and is required). `elementor-pro` is **installed but inactive on both environments**. Audit found only three Pro pieces in use; each now has a child-theme replacement, deployed to both environments and committed on branch `feature/design-review-followup` (2026-11-25, not merged or tagged):
+The site runs without an Elementor Pro licence (Elementor free stays and is required). `elementor-pro` is **installed but inactive on both environments**. Audit found only three Pro pieces in use; each now has a child-theme replacement, deployed to both environments and committed on `main` (`b7310db`, 2026-11-25, not tagged):
 
 | Pro piece | Replacement |
 |---|---|
@@ -238,8 +238,8 @@ To restore: re-add the menu items under menu 159 (top-level item sat between "In
 | Environment | Active theme | Accessibility | Ad rotation | Notes |
 |---|---|---|---|---|
 | Local (enjoyhr.local) | jnews-child | ✅ | n/a | Symlinked from repo |
-| Staging (stagin1.enjoy.hr) | jnews-child | ✅ | ✅ Advanced Ads 2.0.21 live | `functions.php` = branch `feature/design-review-followup` (v1.3.0 + Task 07 affiliate block + three `inc/` requires) |
-| Production (enjoy.hr) | **jnews-child** | ✅ | ✅ Advanced Ads 2.0.21 live | `functions.php` = branch `feature/design-review-followup` (v1.3.0 + Task 07 affiliate block + three `inc/` requires) |
+| Staging (stagin1.enjoy.hr) | jnews-child | ✅ | ✅ Advanced Ads 2.0.21 live | `functions.php` = `main` (v1.3.0 + Task 07 affiliate block + three `inc/` requires) |
+| Production (enjoy.hr) | **jnews-child** | ✅ | ✅ Advanced Ads 2.0.21 live | `functions.php` = `main` (v1.3.0 + Task 07 affiliate block + three `inc/` requires) |
 
 ### What the jnews-child theme does
 
@@ -248,7 +248,7 @@ To restore: re-add the menu items under menu 159 (top-level item sat between "In
 2. Removes JNews's duplicate OG/Twitter/JSON-LD meta output via `remove_action('wp_head', ...)` on the `wp` hook at priority 20 — fixes `og:description` being poisoned with raw "edit post" admin markup
 3. Hooks `the_ad_placement('below-header')` into JNews's `do_action('jnews_header_bottom_ads')` action — injects the Advanced Ads Manual Placement into the JNews header-bottom wrapper. Avoids needing the paid "Custom Position" add-on. Works because JNews skips its own callback on that action when `jnews_ads_header_bottom_enable = false` in the Customizer.
 
-Plus the Task 07 affiliate-disclosure block (see tripwire above). Live on both environments, committed on branch `feature/design-review-followup`, absent from `main` and the v1.3.0 tag. The keep-or-remove decision (Task 07 reckoning) is still open.
+Plus the Task 07 affiliate-disclosure block (see tripwire above). Live on both environments, committed on `main` (`b7310db`), absent from the v1.3.0 tag. The keep-or-remove decision (Task 07 reckoning) is still open.
 
 **`style.css`** — two groups of overrides:
 1. Gradient overlay overrides (Condé Nast aesthetic — photos breathe, minimal dark fade at bottom only)
