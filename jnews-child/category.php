@@ -29,7 +29,13 @@
                                     <?php echo jnews_sanitize_output( $category->render_header('bottom') ); ?>
                                 </div>
                                 <div class="jnews_category_content_wrapper">
-                                    <?php echo jnews_sanitize_output( $category->render_content() ); ?>
+                                    <?php
+                                    if ( function_exists( 'enjoy_is_empty_archive' ) && enjoy_is_empty_archive() ) {
+                                        enjoy_render_empty_state( 'category' );
+                                    } else {
+                                        echo jnews_sanitize_output( $category->render_content() );
+                                    }
+                                    ?>
                                 </div>
                             </div>
                         </div>

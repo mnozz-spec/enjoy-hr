@@ -22,7 +22,9 @@ $notfound = new \JNews\Archive\NotFoundArchive();
                                         <?php endif; ?>
 
                                         <h1 class="jeg_archive_title"><?php jnews_print_translation('Page Not Found', 'jnews', 'page_not_found'); ?></h1>
-                                        <p><?php jnews_print_translation('Sorry the page you were looking for cannot be found. Try searching for the best match or browse the links below:', 'jnews', 'sorry_page_not_found'); ?></p>
+                                        <p><?php esc_html_e( 'This page does not exist or has moved. Search the guides, or start with one of the latest below.', 'jnews-child' ); ?></p>
+
+                                        <p class="enjoy-404-home"><a class="btn" href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php esc_html_e( 'Back Home', 'jnews-child' ); ?></a></p>
 
                                         <div class="jeg_archive_search">
                                             <?php get_search_form(true); ?>
@@ -31,7 +33,13 @@ $notfound = new \JNews\Archive\NotFoundArchive();
                                     <!-- search end -->
 
                                     <div class="jnews_404_content_wrapper">
-                                        <?php echo jnews_sanitize_output( $notfound->render_content() ); ?>
+                                        <?php
+                                        if ( function_exists( 'enjoy_render_empty_state' ) ) {
+                                            enjoy_render_empty_state( '404' );
+                                        } else {
+                                            echo jnews_sanitize_output( $notfound->render_content() );
+                                        }
+                                        ?>
                                     </div>
                                 </div>
 

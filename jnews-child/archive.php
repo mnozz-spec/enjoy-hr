@@ -26,7 +26,13 @@
                                 </div>
 
                                 <div class="jnews_archive_content_wrapper">
-                                    <?php echo jnews_sanitize_output( $archive->render_content() ); ?>
+                                    <?php
+                                    if ( function_exists( 'enjoy_is_empty_archive' ) && enjoy_is_empty_archive() ) {
+                                        enjoy_render_empty_state( ( is_tag() || is_tax() ) ? 'category' : 'archive' );
+                                    } else {
+                                        echo jnews_sanitize_output( $archive->render_content() );
+                                    }
+                                    ?>
                                 </div>
 
                             </div>

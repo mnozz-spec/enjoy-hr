@@ -1,6 +1,7 @@
 <?php
 get_header();
 $search = new \JNews\Archive\SearchArchive();
+$enjoy_no_results = function_exists( 'enjoy_is_empty_archive' ) && enjoy_is_empty_archive();
 ?>
 
 	<div class="jeg_main <?php $search->main_class(); ?>">
@@ -24,7 +25,16 @@ $search = new \JNews\Archive\SearchArchive();
 											</div>
 										<?php endif; ?>
 
-										<h1 class="jeg_archive_title"><?php printf( jnews_return_translation( 'Search Result for \'%s\'', 'jnews', 'search_result_for_s' ), get_search_query() ); ?></h1>
+										<?php if ( $enjoy_no_results ) : ?>
+											<h1 class="jeg_archive_title">
+												<?php
+												/* translators: %s: the search query. */
+												echo esc_html( sprintf( __( 'Nothing found for “%s”', 'jnews-child' ), get_search_query( false ) ) );
+												?>
+											</h1>
+										<?php else : ?>
+											<h1 class="jeg_archive_title"><?php printf( jnews_return_translation( 'Search Result for \'%s\'', 'jnews', 'search_result_for_s' ), get_search_query() ); ?></h1>
+										<?php endif; ?>
 
 										<div class="jeg_archive_search">
 											<?php get_search_form( true ); ?>
@@ -33,7 +43,13 @@ $search = new \JNews\Archive\SearchArchive();
 									<!-- search end -->
 
 									<div class="jnews_search_content_wrapper">
-										<?php echo jnews_sanitize_output( $search->render_content() ); ?>
+										<?php
+										if ( $enjoy_no_results ) {
+											enjoy_render_empty_state( 'search' );
+										} else {
+											echo jnews_sanitize_output( $search->render_content() );
+										}
+										?>
 									</div>
 								</div>
 

@@ -5,7 +5,7 @@ Description: Child theme for JNews — enjoy.hr
 Author: Marko Nožica
 Author URI: https://enjoy.hr
 Template: jnews
-Version: 1.0.0
+Version: 1.5.0
 Text Domain: jnews-child
 */
 
@@ -75,4 +75,363 @@ Text Domain: jnews-child
 .jeg_inner_content .content-inner a:not(.btn):not(.jeg_readmore):not(.wp-block-button__link) {
     text-decoration: underline;
     text-underline-offset: 2px;
+}
+
+/* =============================================================================
+   AFFILIATE DISCLOSURE NOTICE — Task 07
+   Rendered above article body on posts where _enjoy_has_affiliate_links = '1'.
+   Visible but understated: warm cream background, tan accent border, italic body.
+   FTC 16 CFR Part 255 requires "clear and conspicuous" — this satisfies that
+   without competing visually with the hero photo or headline.
+   See: jnews-child/functions.php → enjoy_affiliate_disclosure_notice()
+   See: docs/affiliate-strategy.md
+   ============================================================================= */
+.affiliate-disclosure {
+    margin: 0 0 28px;
+    padding: 14px 18px;
+    background: #fbf7f2;
+    border-left: 3px solid #c9a87b;
+    border-radius: 2px;
+    font-size: 0.92em;
+    line-height: 1.55;
+    color: #4a4135;
+}
+.affiliate-disclosure p {
+    margin: 0;
+}
+.affiliate-disclosure em {
+    font-style: italic;
+}
+/* Override the article-body underline rule (Fix 3) for any link inside
+   the disclosure box — keeps the notice visually quiet. */
+.jeg_inner_content .content-inner .affiliate-disclosure a {
+    text-decoration: none;
+    border-bottom: 1px dotted currentColor;
+}
+
+/* =============================================================================
+   ELEMENTOR PRO REPLACEMENTS
+   Child-theme versions of the three things Elementor Pro used to provide.
+   See: jnews-child/inc/contact-form.php, jnews-child/inc/newsletter-popup.php
+   ============================================================================= */
+
+/* --- Contact form ([enjoy_contact_form]) --- */
+.enjoy-contact {
+    --enjoy-field-border: #d5d5d5;
+    --enjoy-field-focus: #2c6fc0;
+    max-width: 885px;
+    margin: 0 auto;
+}
+/* The Contact page's Elementor container centres its children, which
+   shrink-wraps the Shortcode widget; let it span the container instead. */
+.elementor-widget-shortcode:has(.enjoy-contact) {
+    width: 100%;
+}
+.enjoy-contact__field {
+    margin: 0 0 18px;
+}
+.enjoy-contact__field label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+.enjoy-contact__field input,
+.enjoy-contact__field textarea {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 14px;
+    border: 1px solid var(--enjoy-field-border);
+    border-radius: 3px;
+    font-size: 16px; /* 16px stops iOS zooming the page on focus */
+}
+.enjoy-contact__field input:focus,
+.enjoy-contact__field textarea:focus {
+    border-color: var(--enjoy-field-focus);
+    outline: 2px solid var(--enjoy-field-focus);
+    outline-offset: 1px;
+}
+.enjoy-contact__submit .btn {
+    min-height: 44px;
+    padding: 0 32px;
+}
+/* Honeypot: kept off-screen rather than display:none so naive bots still fill it */
+.enjoy-contact__hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+.enjoy-contact__notice {
+    margin: 0 0 24px;
+    padding: 14px 18px;
+    border: 1px solid;
+    border-radius: 2px;
+}
+.enjoy-contact__notice--success {
+    background: #f1f8f3;
+    border-color: #3c8a55;
+    color: #1f4d2f;
+}
+.enjoy-contact__notice--error {
+    background: #fdf3f2;
+    border-color: #c0392b;
+    color: #7a241b;
+}
+
+/* --- Newsletter popup (front page, bottom right) --- */
+.enjoy-popup {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 9999;
+    box-sizing: border-box;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 36px 24px 24px;
+    background: #fff;
+    box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.18);
+    text-align: center;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.enjoy-popup[hidden] {
+    display: none;
+}
+.enjoy-popup.is-open {
+    opacity: 1;
+    transform: none;
+}
+.enjoy-popup__close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #555;
+    font-size: 26px;
+    line-height: 1;
+    cursor: pointer;
+}
+.enjoy-popup__title {
+    margin: 0 0 10px;
+    font-size: 24px;
+}
+.enjoy-popup__text {
+    margin: 0 0 18px;
+}
+.enjoy-popup .mc4wp-form label {
+    display: block;
+    font-weight: 600;
+}
+.enjoy-popup .mc4wp-form input[type="email"],
+.enjoy-popup .mc4wp-form input[type="submit"] {
+    box-sizing: border-box;
+    max-width: none;
+}
+.enjoy-popup .mc4wp-form input[type="email"] {
+    width: 100%;
+    min-height: 44px;
+    margin-top: 6px;
+    font-size: 16px;
+}
+.enjoy-popup .mc4wp-form input[type="submit"] {
+    width: 100%;
+    min-height: 44px;
+}
+@media (min-width: 768px) {
+    .enjoy-popup {
+        right: 20px;
+        bottom: 20px;
+        left: auto;
+        width: 380px;
+        padding: 48px 40px 40px;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.18);
+        transform: translateX(20px);
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .enjoy-popup {
+        transition: none;
+    }
+}
+
+/* --- 404 page: "Back Home" button (was the Elementor Pro 404 template) --- */
+.enjoy-404-home {
+    margin: 20px 0 30px;
+}
+
+/* --- Homepage spacing, moved from Elementor Pro page-level Custom CSS (page 398) ---
+   Legacy WPBakery helper classes left on homepage sections by the JNews demo
+   import. !important kept as in the original rules: they override Elementor's
+   own per-element spacing. */
+.vc_custom_1492066458960 { margin-top: -30px !important; }
+.vc_custom_1496890676325 { margin-top: 30px !important; }
+.vc_custom_1492066358906 { padding-right: 0 !important; padding-left: 0 !important; }
+.vc_custom_1496892063515 { margin-bottom: 15px !important; }
+.vc_custom_1496890040339 { margin-bottom: 15px !important; }
+
+/* =============================================================================
+   DESIGN REVIEW REFINEMENTS (2026-11-25)
+   Typography, legibility and contrast fixes from the design review. Identity is
+   unchanged: same fonts, same coral badges, same hues, only darker where a text
+   colour failed WCAG AA (4.5:1).
+   Stylesheet order matters here: this file loads after jnews/assets/dist/
+   frontend.min.css and Elementor's kit CSS, but BEFORE uploads/jnews/scheme.css
+   and the inline #jeg_dynamic_css block, so a few selectors below carry one
+   extra class to win against those later sheets.
+   ============================================================================= */
+
+:root {
+    /* Elementor kit accent #467ff7 (3.72:1 on #fff) darkened on the same hue:
+       5.09:1 on #fff, 4.67:1 on #f5f5f5 */
+    --enjoy-link-blue: #1c62f5;
+    /* Replaces JNews #a0a0a0 (2.61:1): 5.74:1 on #fff, 4.95:1 on #eee */
+    --enjoy-meta-grey: #666;
+    /* Replaces #dd3333 / #f70d28 on the #e8e8e8 footer (3.4-3.7:1): 4.97:1 */
+    --enjoy-footer-red: #c01e1e;
+    /* Measured: 70-75 characters per line of 18px Roboto, 62-65 in the
+       wider Elementor kit face */
+    --enjoy-measure: 620px;
+}
+
+/* --- 1. Article body: type size and reading measure ---------------------- */
+
+/* Elementor text widgets inside posts drop to 14px/21px on phones.
+   Overrides: elementor frontend.min.css .elementor-widget-text-editor
+   { font-size: var(--e-global-typography-text-font-size) } */
+.content-inner .elementor-widget-text-editor {
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+/* Word-pasted callout tables (table.MsoNormalTable) rendered at 11.9px on phones.
+   Overrides: jnews frontend.min.css
+   body:not(.jnews-disable-style-table) .entry-content td { font-size: .85em } */
+.entry-content .content-inner .MsoNormalTable td {
+    font-size: 0.9em;
+    line-height: 1.5;
+}
+/* Word leaves inline style="font-size: 10.0pt" on the spans in those cells;
+   !important is the only way past an inline style. */
+.content-inner .MsoNormalTable span[style*="font-size"] {
+    font-size: inherit !important;
+}
+
+/* Overrides: text-wrap default; avoids one-word last lines in body copy */
+.content-inner p {
+    text-wrap: pretty;
+}
+
+@media (min-width: 1025px) {
+    /* 16px/26px in a 783px column ran ~100 characters per line.
+       Overrides: jnews frontend.min.css .single .content-inner { font-size: 16px }
+       and the Elementor text widget rule above. */
+    .single .content-inner,
+    .content-inner .elementor-widget-text-editor {
+        font-size: 18px;
+        line-height: 1.65;
+    }
+    /* Cap the text measure only; figures, tables, embeds and Elementor media
+       keep the full column width. */
+    .single .content-inner :is(p, ul, ol, h2, h3) {
+        max-width: var(--enjoy-measure);
+    }
+}
+
+/* --- 2 + 3. Category badges: centred label, readable size ------------------
+   The 44px touch-target rule above (ACCESSIBILITY FIXES, FIX 2) sets
+   display: inline-flex, but these JNews rules are more specific and put
+   display: inline-block back, which pins the label to the top of the 44px
+   block. Same selectors, later in the cascade, so the flex centring applies.
+   Overrides: jnews frontend.min.css
+   .jeg_thumb .jeg_post_category a, .jeg_pl_lg_box .jeg_post_category a,
+   .jeg_heroblock .jeg_post_category a
+   { display: inline-block; font-size: 11px | inherit (9px on phones) } */
+.jeg_thumb .jeg_post_category a,
+.jeg_pl_lg_box .jeg_post_category a,
+.jeg_heroblock .jeg_post_category a {
+    display: inline-flex;
+    align-items: center;
+    font-size: 12px;
+}
+
+/* --- 3 + 4. Post meta (dates, bylines): size and contrast ------------------
+   Overrides: jnews frontend.min.css .jeg_post_meta { color: #a0a0a0;
+   font-size: 11px }, .entry-header .jeg_post_meta { color: #a0a0a0 } and the
+   10px variants at max-width 480px / 768px.
+   Meta on photos (.jeg_heroblock, .jeg_pl_md_box) keeps its white colour:
+   those JNews rules are more specific than this one. */
+.jeg_post_meta,
+.jeg_heroblock .jeg_post_meta {
+    font-size: 12px;
+}
+.jeg_post_meta,
+.entry-header .jeg_post_meta {
+    color: var(--enjoy-meta-grey);
+}
+
+/* Overrides: jnews frontend.min.css
+   #breadcrumbs .breadcrumb_last_link a { color: #a0a0a0 }
+   (the ID is JNews's own; it is needed to match that specificity) */
+#breadcrumbs .breadcrumb_last_link a {
+    color: var(--enjoy-meta-grey);
+}
+
+/* --- 5. Text links: darker blue ---------------------------------------------
+   Every link without a more specific colour (text category links on cards,
+   h3.jeg_author_name a) gets the Elementor kit accent through
+   .elementor-kit-231 a { color: var(--e-global-color-accent) }.
+   The variable is redefined rather than the link colour: a later
+   "kit a { color }" rule would also beat JNews rules of equal specificity
+   such as .jeg_post_meta a { color: inherit } and turn dates blue.
+   Overrides: uploads/elementor/css/post-231.css
+   .elementor-kit-231 { --e-global-color-accent: #467FF7 } */
+[class*="elementor-kit-"] {
+    --e-global-color-accent: var(--enjoy-link-blue);
+}
+
+/* --- 6. Footer column titles -----------------------------------------------
+   Overrides: jnews frontend.min.css .jeg_footer .jeg_footer_heading h3
+   { color: #f70d28 } and the Customizer rule in #jeg_dynamic_css
+   .jeg_footer_sidecontent .jeg_footer_primary .col-md-7 .jeg_footer_title
+   { color: #dd3333 }, which is printed after this file. */
+.jeg_footer_sidecontent .jeg_footer_primary .footer_column h3.jeg_footer_title {
+    color: var(--enjoy-footer-red);
+}
+
+/* --- 7. Category archive header title --------------------------------------
+   The header renders as .jeg_cat_overlay.normal (not .dark), so the title was
+   dark grey straight on the photo and the rule in GRADIENT OVERLAY OVERRIDES
+   never matched. Scoped to headers that actually have a photo; a category
+   without one keeps the dark title on its light background.
+   Overrides: jnews frontend.min.css
+   .jeg_cat_overlay .jeg_cat_bg:after { background: hsla(0,0%,100%,.2) }
+   .jeg_cat_title { color: inherit heading colour } */
+.jeg_cat_overlay .jeg_cat_bg[style*="background-image"]:after {
+    background: linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.45) 55%, rgba(0,0,0,0.6) 100%);
+}
+.jeg_cat_overlay:has(.jeg_cat_bg[style*="background-image"]) .jeg_cat_title {
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+}
+
+/* --- 8. Noise: "0 shares" counters in the sidebar Popular list -------------
+   Every counter reads 0. Hides the counter and its hover share list.
+   Overrides: jnews frontend.min.css .popularpost_meta / .jeg_socialshare */
+.popularpost_meta .jeg_socialshare {
+    display: none;
+}
+
+/* --- 9. Headings: balanced line breaks --------------------------------------
+   Overrides: text-wrap default on card titles, post titles, archive title */
+.jeg_post_title,
+.jeg_cat_title,
+.content-inner h2 {
+    text-wrap: balance;
 }

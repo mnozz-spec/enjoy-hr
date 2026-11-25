@@ -1,0 +1,75 @@
+/*
+ * Empty states: 404, empty archives, no-result searches.
+ * Markup comes from inc/empty-states.php and reuses JNews classes
+ * (.jeg_block_heading_6, .jeg_block_title, .jeg_post_title, .jeg_search_form)
+ * so type, colour and the heading rule follow the Customizer settings.
+ * Replaces the JNews box `.jeg_empty_module` ("No Content Available").
+ */
+
+.enjoy-empty {
+    --enjoy-empty-gap: 20px;
+    --enjoy-empty-rule: #eee;
+
+    margin-bottom: 40px;
+}
+
+.enjoy-empty .enjoy-empty__title {
+    margin: 0 0 10px;
+    font-size: 22px;
+    line-height: 1.3;
+    text-wrap: balance;
+}
+
+.enjoy-empty .enjoy-empty__text {
+    max-width: 65ch;
+    margin: 0 0 var(--enjoy-empty-gap);
+}
+
+.enjoy-empty .enjoy-empty__search {
+    max-width: 480px;
+    margin: 0 0 calc(var(--enjoy-empty-gap) * 2);
+}
+
+/* Guide list */
+.enjoy-empty .enjoy-empty__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* Overrides JNews `.jeg_post_title` sizing, which varies per block type. */
+.enjoy-empty .enjoy-empty__list .jeg_post_title {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.4;
+    border-bottom: 1px solid var(--enjoy-empty-rule);
+}
+
+.enjoy-empty .enjoy-empty__list .jeg_post_title:last-child {
+    border-bottom: 0;
+}
+
+.enjoy-empty .enjoy-empty__list a {
+    display: flex;
+    align-items: center;
+    min-height: 44px; /* touch target */
+    padding: 8px 0;
+    color: inherit;
+}
+
+.enjoy-empty .enjoy-empty__list a:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+}
+
+/* 404: spacing between the header text, the button and the search form. */
+.jeg_404_content .enjoy-404-home {
+    margin: 0 0 var(--enjoy-empty-gap, 20px);
+}
+
+@media (min-width: 768px) {
+    .enjoy-empty .enjoy-empty__title {
+        font-size: 26px;
+    }
+}
